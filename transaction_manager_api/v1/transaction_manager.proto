@@ -1,0 +1,183 @@
+syntax = "proto3";
+package transaction_manager;
+
+import "common/v1/common.proto";
+import "common/v1/packet.proto";
+
+// THIS PROTO FILE IS INTENDED FOR USE FOR KNOX AND KNOX CUSTOMERS.
+
+/* [Example]
+{
+  "authorities": [
+    {
+      "key": "AuthorityKey",
+      "value": {
+        "verifier": "VerifierLengthVariesByAlgo",
+        "url": "AUTHORITY_URL"
+      }
+    },
+    {
+      "key": "AuthorityKey2",
+      "value": {
+        "verifier": "VerifierLengthVariesByAlgo",
+        "url": "AUTHORITY2_URL"
+      }
+    }
+  ]
+}
+*/
+message SetAssetAuthoritiesRequest {
+  // List of Authorities and Assets to Set.
+  map<string, common.AssetAuthority> authorities = 1;
+}
+
+/* [Example]
+{}
+*/
+message SetAssetAuthoritiesResponse {
+  // Empty body
+}
+
+/* [Example]
+{
+  "authorities": [
+    {
+      "key": "AuthorityKey",
+      "value": {
+        "verifier": "VerifierLengthVariesByAlgo",
+        "url": "AUTHORITY_URL"
+      }
+    },
+    {
+      "key": "AuthorityKey2",
+      "value": {
+        "verifier": "VerifierLengthVariesByAlgo",
+        "url": "AUTHORITY2_URL"
+      }
+    }
+  ]
+}
+*/
+message AddAssetAuthoritiesRequest {
+  // List of Authorities and Assets to Add.
+  map<string, common.AssetAuthority> authorities = 1;
+}
+
+/* [Example]
+{}
+*/
+message AddAssetAuthoritiesResponse {
+  // Empty body
+}
+
+/* [Example]
+{
+  "asset_code": "USD",
+  "authority": {
+    "verifier": "VerifierLengthVariesByAlgo",
+    "url": "AUTHORITY2_URL"
+  }
+}
+*/
+message AddAssetAuthorityRequest {
+  // Currency Code
+  string asset_code               = 1;
+  // Asset Authority
+  common.AssetAuthority authority = 2;
+}
+
+/* [Example]
+{}
+*/
+message AddAssetAuthorityResponse {}
+
+/* [Example]
+{
+  "verifier": "VerifierLengthVariesByAlgo"
+}
+*/
+message RemoveAuthorityRequest {
+  // Verifier of the Authority to remove
+  string verifier = 1;
+}
+
+/* [Example]
+{}
+*/
+message RemoveAuthorityResponse {}
+
+/* [Example]
+{}
+*/
+message GetAssetAuthoritiesRequest {}
+
+/* [Example]
+{
+  "authorities": [
+    {
+      "key": "AuthorityKey",
+      "value": {
+        "verifier": "VerifierLengthVariesByAlgo",
+        "url": "AUTHORITY_URL"
+      }
+    },
+    {
+      "key": "AuthorityKey2",
+      "value": {
+        "verifier": "VerifierLengthVariesByAlgo",
+        "url": "AUTHORITY2_URL"
+      }
+    }
+  ]
+}
+*/
+message GetAssetAuthoritiesResponse {
+  // List of Asset Authorities
+  map<string, common.AssetAuthority> authorities = 1;
+}
+
+/* [Example]
+{
+  "start": "2020-01-01T00:00:00Z",
+  "end": "2020-02-01T00:00:00Z",
+  "participants": [
+    "VerifierLengthVariesByAlgo",
+  ],
+  "page": 0,
+  "page_size": 10
+}
+*/
+message ListFulfilledCommitmentsRequest {
+  // The timestamp of the start of the desired time period
+  string start                 = 1;
+  // The timestamp of the end of the desired time period
+  optional string end          = 2;
+  // Optional list of participants by verifier to filter the commitments to. If
+  // empty, then no filter is applied.
+  repeated string participants = 3;
+  // Page number for pagination. First page is '0'.
+  int32 page                   = 4;
+  // Elements per page for pagination.
+  int32 page_size              = 5;
+}
+
+message ListFulfilledCommitmentsResponse {
+  repeated common.Commitment commitments = 1;
+}
+
+// Transaction Manager Service.
+service TransactionManager {
+  // Set the Authorities for Assets.
+  rpc SetAssetAuthorities(SetAssetAuthoritiesRequest) returns (SetAssetAuthoritiesResponse);
+  // Append a list of authorities for given currency codes
+  rpc AddAssetAuthorities(AddAssetAuthoritiesRequest) returns (AddAssetAuthoritiesResponse);
+  // Append an authority for a given currency code
+  rpc AddAssetAuthority(AddAssetAuthorityRequest) returns (AddAssetAuthorityResponse);
+  // Remove all assets for an authority
+  rpc RemoveAuthority(RemoveAuthorityRequest) returns (RemoveAuthorityResponse);
+  // Returns current issuer asset authorities
+  rpc GetAssetAuthorities(GetAssetAuthoritiesRequest) returns (GetAssetAuthoritiesResponse);
+
+  // List the commitments fulfilled during a given time period.
+  rpc ListFulfilledCommitments(ListFulfilledCommitmentsRequest) returns (ListFulfilledCommitmentsResponse);
+}
