@@ -1,0 +1,206 @@
+syntax = "proto3";
+
+package business_api.v1;
+
+import "common/v1/common.proto";
+import "common/v1/packet.proto";
+import "common/v1/amqp.proto";
+
+/* [Example]
+{}
+*/
+message ListRequest {}
+
+/* [Example]
+{
+  "list": [
+    "item1",
+    "item2",
+    "item3"
+  ]
+}
+*/
+message ListResponse {
+  // List.
+  repeated string list = 1;
+}
+
+/* [Example]
+{}
+*/
+message ClearRequest {}
+
+/* [Example]
+{}
+*/
+message ClearResponse {}
+
+/* [Example]
+{
+  "payload": {
+    "payload_type": 1,
+    "data": "xDATAxBYTES="
+  }
+}
+*/
+message SendPayloadRequest {
+  // Payload
+  common.Payload payload = 1;
+}
+
+/* [Example]
+{}
+*/
+message SendPayloadResponse {}
+
+/* [Example]
+{
+  "participant": "zParticipantPublicKey",
+  "memo": "SAMPLE MEMO",
+  "commitments": [
+    {
+      "sender": "zSenderPublicKey",
+      "recipient": "zRecipientPublicKey",
+      "amount": {
+        "asset_code":"USD",
+        "amount":100,
+        "decimals":2
+      }
+    },
+    {
+      "sender": "zSenderPublicKey2",
+      "recipient": "zRecipientPublicKey2",
+      "amount": {
+        "asset_code":"USD",
+        "amount":500,
+        "decimals":2
+      }
+    }
+  ],
+  "conditions": [
+    {
+      "condition": {
+        "hash": {
+          "presenter": "PresenterPublicKey",
+          "hash": "13550350a8681c84"
+        }
+      }
+    },
+    {
+      "condition": {
+        "hash": {
+          "presenter": "PresenterPublicKey",
+          "hash": "13550350a8681c84"
+        }
+      }
+    }
+  ]
+}
+*/
+message SendNewTransactionRequest {
+  // Participant Public Key.
+  string participant                     = 1;
+  // Transaction Memo.
+  string memo                            = 2;
+  // Commitments.
+  repeated common.Commitment commitments = 3;
+  // Conditions.
+  repeated common.Condition conditions   = 4;
+}
+
+/* [Example]
+{
+  "contract_id": "a18f7224-a7c1-41f8-b14f-75e920b8ea81"
+}
+*/
+message SendNewTransactionResponse {
+  // Contract ID.
+  string contract_id = 1;
+}
+
+/* [Example]
+{
+  "participant": "zParticipantPublicKey",
+  "contract_id": "a18f7224-a7c1-41f8-b14f-75e920b8ea81",
+  "hash": "a692da1c23c3b557b80604555d38648ca49abdcd7ad3a833c32b070c55b3de8e",
+  "algorithm": 0
+}
+*/
+message SendProposalAckedRequest {
+  // Participant Public Key.
+  string participant             = 1;
+  // Contract ID.
+  string contract_id             = 2;
+  // Hash of preimage in hex format
+  string hash                    = 3;
+  // Hash Algorithm.
+  common.HashAlgorithm algorithm = 4;
+}
+
+/* [Example]
+{}
+*/
+message SendProposalAckedResponse {}
+
+/* [Example]
+{
+  "participant": "zParticipantPublicKey",
+  "contract_id": "a18f7224-a7c1-41f8-b14f-75e920b8ea81"
+}
+*/
+message SendProposalNackedRequest {
+  // Participant Public Key.
+  string participant = 1;
+  // Contract ID.
+  string contract_id = 2;
+}
+
+/* [Example]
+{}
+*/
+message SendProposalNackedResponse {}
+
+/* [Example]
+{
+  "participant": "zParticipantPublicKey",
+  "contract_id": "a18f7224-a7c1-41f8-b14f-75e920b8ea81",
+  "secret": "9ca6333ba92ea4aaa3e4c972c4c9301f2931154b73373a25b849fce8fd4e16c9"
+}
+*/
+message SendSecretRevealedRequest {
+  // Participant Public Key.
+  string participant = 1;
+  // Contract ID.
+  string contract_id = 2;
+  // Preimage bytes in hex format
+  string secret      = 3;
+}
+
+/* [Example]
+{}
+*/
+message SendSecretRevealedResponse {}
+
+// Business Service.
+service Business {
+  // List.
+  rpc List(ListRequest) returns (ListResponse);
+
+  // Clear Request.
+  rpc Clear(ClearRequest) returns (ClearResponse);
+
+  // Send Payload.
+  rpc SendPayload(SendPayloadRequest) returns (SendPayloadResponse);
+
+  // Send New Transaction.
+  rpc SendNewTransaction(SendNewTransactionRequest) returns (SendNewTransactionResponse);
+
+  // Send Proposal Acked.
+  rpc SendProposalAcked(SendProposalAckedRequest) returns (SendProposalAckedResponse);
+
+  // Send Proposal Nacked.
+  rpc SendProposalNacked(SendProposalNackedRequest) returns (SendProposalNackedResponse);
+
+  // Send Secret Revealed.
+  rpc SendSecretRevealed(SendSecretRevealedRequest) returns (SendSecretRevealedResponse);
+}

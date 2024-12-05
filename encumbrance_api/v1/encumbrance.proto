@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package encumbrance_api.v1;
+
+import "common/v1/common.proto";
+
+/* [Example]
+{
+  "issuer": "zIssuerPublicKey",
+  "amount": {
+    "asset_code": "USD",
+    "amount": 100,
+    "decimals": 2
+  }
+}
+*/
+message ParticipantAmount {
+  // Issuer Public Key.
+  string issuer        = 1;
+  // Amount requested to be encumbered or unencumbered.
+  common.Amount amount = 2;
+}
+
+/* [Example]
+{
+  "uetr": "0124d350-372f-44ea-ad41-6d215c294a40",
+  "values": [{
+    "issuer": "zIssuerPublicKey",
+    "amount": {
+      "asset_code": "USD",
+      "amount": 100,
+      "decimals": 2
+    }
+  }]
+}
+*/
+message EncumberRequest {
+  // UETR of the issuance contract
+  string uetr                       = 1;
+  // Participant amounts
+  repeated ParticipantAmount values = 2;
+}
+
+/* [Example]
+{
+  "request_id": "36ff28ae-85a4-4f5d-a767-d34fd4284807",
+  "status": 1
+}
+*/
+message EncumberResponse {
+  // Status of Encumbrance.
+  enum Status {
+    // Status Unspecified.
+    UNSPECIFIED = 0;
+    // Status Successful.
+    SUCCESS     = 1;
+    // Status Unsuccessful.
+    FAILURE     = 2;
+  }
+  // UUID of request being responded to
+  string request_id = 1;
+
+  // Status of the transaction
+  Status status     = 2;
+}
+
+/* [Example]
+{
+  "uetr": "0124d350-372f-44ea-ad41-6d215c294a40",
+  "values": [{
+    "issuer": "zIssuerPublicKey",
+    "amount": {
+      "asset_code": "USD",
+      "amount": 100,
+      "decimals": 2
+    }
+  }]
+}
+*/
+message UnencumberRequest {
+  // UETR of the redeem contract
+  string uetr                       = 1;
+  // Participant amounts
+  repeated ParticipantAmount values = 2;
+}
+
+/* [Example]
+{
+  "request_id": "36ff28ae-85a4-4f5d-a767-d34fd4284807",
+  "status": 1
+}
+*/
+message UnencumberResponse {
+  // Status of Encumbrance.
+  enum Status {
+    // Status Unspecified.
+    UNSPECIFIED = 0;
+    // Status Successful.
+    SUCCESS     = 1;
+    // Status Unsuccessful.
+    FAILURE     = 2;
+  }
+  // UUID of the request being responded to
+  string request_id = 1;
+  // Status of the transaction
+  Status status     = 2;
+}
+
+// Encumbrance Service.
+service Encumbrance {
+  // Encumber specific Amount of Assets for an Issuer.
+  rpc Encumber(EncumberRequest) returns (EncumberResponse);
+  // Unencumber specific Amount of Assets for an Issuer.
+  rpc Unencumber(UnencumberRequest) returns (UnencumberResponse);
+}
