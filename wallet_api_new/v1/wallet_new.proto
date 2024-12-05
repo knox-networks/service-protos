@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+// TODO #4575: Rename wallet_api.v1
+package wallet_api_new.v1;
+
+import "google/protobuf/empty.proto";
+
+// THIS PROTO FILE IS INTENDED FOR USE FOR KNOX AND KNOX CUSTOMERS.
+
+/* [Example]
+{
+  "wallet_name": "WALLET_NAME"
+}
+*/
+message CreateWalletRequest {
+  // Human friendly name of the wallet.
+  string wallet_name = 1;
+}
+
+/* [Example]
+{
+  "wallet_name": "WALLET_NAME",
+  "public_key": "zPublicKeyMultibase58Encoded"
+}
+*/
+message WalletResponse {
+  // Human friendly name of the wallet.
+  string wallet_name = 1;
+  // Public key of the wallet.
+  string public_key  = 2;
+}
+
+/* [Example]
+{
+  "page": 0,
+  "page_size": 10
+}
+*/
+message ListWalletsRequest {
+  // Page number for pagination.
+  int32 page      = 1;
+  // Size of the page for pagination.
+  int32 page_size = 2;
+}
+
+/* [Example]
+{
+  "wallets": [
+    {
+      "wallet_name": "WALLET1",
+      "public_key": "zPublicKeyMultibase58Encoded"
+    },
+    {
+      "wallet_name": "WALLET2",
+      "public_key": "zPublicKeyMultibase58Encoded"
+    }
+  ],
+  "total_count": 5
+}
+*/
+message ListWalletsResponse {
+  // List of Wallet objects.
+  repeated WalletResponse wallets = 1;
+  // Number of wallets belonging to the owner.
+  uint32 total_count              = 2;
+}
+
+/*
+{
+  "wallet_name": "WALLET_NAME"
+}
+*/
+message DeleteWalletRequest {
+  // Human friendly name of the wallet.
+  string wallet_name = 1;
+}
+
+// Transacts and holds digital banknotes. This is a server side wallet solution in lieu of a mobile wallet,
+// hosted by the bank on behalf of the customer who opts in to do so. Can also be used by institutions,
+// e.g. a financial institution vault.
+//
+service CustodialWallet {
+  // Creates a wallet for a given owner, which can manage the wallet.
+  rpc CreateWallet(CreateWalletRequest) returns (WalletResponse);
+  // List all wallets for a given owner.
+  rpc ListWallets(ListWalletsRequest) returns (ListWalletsResponse);
+  // Deletes the wallet with the given name. Must have zero balance.
+  rpc DeleteWallet(DeleteWalletRequest) returns (google.protobuf.Empty);
+}

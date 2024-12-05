@@ -1,0 +1,778 @@
+syntax = "proto3";
+
+package asset_controller;
+
+import "common/v1/common.proto";
+import "common/v1/packet.proto";
+
+/* [Example]
+{
+  "amount": {
+    "asset_code": "USD",
+    "amount": 5700,
+    "decimals":2
+  },
+  "file_count": 57
+}
+*/
+message WalletBalance {
+  // Amount in Wallet
+  common.Amount amount = 1;
+  // Number of Files in Wallet
+  int64 file_count     = 2;
+}
+
+/* [Example]
+{
+  "asset_type": "BankAssetType",
+  "page": 0,
+  "page_size": 10000,
+  "verifier": "zWalletPublicKey"
+}
+*/
+message ListAssetsRequest {
+  // Type of asset.
+  string asset_type         = 1;
+  // Page number for pagination. First page is '0'.
+  uint32 page               = 2;
+  // Elements per page for pagination.
+  optional uint32 page_size = 3;
+  // [MultibaseVerifier] Wallet verifier.
+  string verifier           = 4;
+}
+
+/* [Example]
+{
+  "assets": [
+    {
+      "version": "0.1.0",
+      "id": "ASSET_ID",
+      "currency": "USD",
+      "amount": 100,
+      "decimals": 2,
+      "authority": "zAuthorityPublicKeyMultibase58Encoded",
+      "issuer": "zIssuerPublicKeyMultibase58Encoded",
+      "issuance_date": "2006-01-02T15:04:05Z",
+      "block_depth": 3,
+      "authorization_signature": "ByteLengthAuthSignatureVariesByAlgo=",
+      "transfer_signature": "ByteLengthTransferSignatureVariesByAlgo=",
+      "notaries": [
+        {
+          "did": "did:method-name:zDIDMultibase58Encoded",
+          "signature": "ByteLengthSignatureVariesByAlgo="
+        },
+        {
+          "did": "did:method-name:zDIDMultibase58Encoded",
+          "signature": "ByteLengthSignatureVariesByAlgo="
+        }
+      ]
+    },
+    {
+      "version": "0.1.0",
+      "id": "ASSET_ID",
+      "currency": "USD",
+      "amount": 500,
+      "decimals": 2,
+      "authority": "zAuthorityPublicKeyMultibase58Encoded",
+      "issuer": "zIssuerPublicKeyMultibase58Encoded",
+      "issuance_date": "2006-01-02T15:04:05Z",
+      "block_depth": 3,
+      "authorization_signature": "ByteLengthAuthSignatureVariesByAlgo=",
+      "transfer_signature": "ByteLengthTransferSignatureVariesByAlgo=",
+      "notaries": [
+        {
+          "did": "did:method-name:zDIDMultibase58Encoded",
+          "signature": "ByteLengthSignatureVariesByAlgo="
+        },
+        {
+          "did": "did:method-name:zDIDMultibase58Encoded",
+          "signature": "ByteLengthSignatureVariesByAlgo="
+        }
+      ]
+    }
+  ],
+  "total_count": 2
+}
+*/
+message ListAssetsResponse {
+
+  /* [Example]
+  {
+    "did": "DID_NOTARY",
+    "signature": "ByteLengthAuthSignatureVariesByAlgo="
+  }
+  */
+  message Notary {
+    // DID of Notary
+    string did      = 1;
+    // Signature of Notary
+    bytes signature = 2;
+  }
+
+  /* [Example]
+  {
+    "version": "0.1.0",
+    "id": "ASSET_ID",
+    "currency": "USD",
+    "amount": 100,
+    "decimals": 2,
+    "authority": "zAuthorityPublicKeyMultibase58Encoded",
+    "issuer": "zIssuerPublicKeyMultibase58Encoded",
+    "issuance_date": "2006-01-02T15:04:05Z",
+    "block_depth": 3,
+    "authorization_signature": "ByteLengthAuthSignatureVariesByAlgo=",
+    "transfer_signature": "ByteLengthTransferSignatureVariesByAlgo=",
+    "notaries": [
+      {
+        "did": "did:method-name:zDIDMultibase58Encoded",
+        "signature": "ByteLengthSignatureVariesByAlgo="
+      },
+      {
+        "did": "did:method-name:zDIDMultibase58Encoded",
+        "signature": "ByteLengthSignatureVariesByAlgo="
+      }
+    ]
+  }
+  */
+  message Asset {
+    // Version of the digital banknote file.
+    string version                = 1;
+    // UUID of the digital banknote file.
+    string id                     = 2;
+    // ISO-4217 currency code.
+    string currency               = 3;
+    // Amount of the digital banknote.
+    int64 amount                  = 4;
+    // Decimal precision.
+    uint32 decimals               = 5;
+    // Public key of the monetary Authority.
+    string authority              = 6;
+    // Public key of the Issuer.
+    string issuer                 = 7;
+    // RFC3339 timestamp of the issuance date.
+    string issuance_date          = 8;
+    // Number of signature blocks, representing the owner history.
+    uint32 block_depth            = 9;
+    // Signature of the latest block hash from the Authority.
+    bytes authorization_signature = 10;
+    // Signature of the previous owner.
+    bytes transfer_signature      = 11;
+    // List of Notaries.
+    repeated Notary notaries      = 12;
+  }
+
+  // List of Assets.
+  repeated Asset assets = 1;
+
+  // Total number of asset files
+  uint32 totalCount     = 2;
+}
+
+/* [Example]
+{
+  "verifier": "zWalletPublicKey"
+}
+*/
+message ListBalancesRequest {
+  // Wallet verifier.
+  string verifier = 1;
+}
+
+/* [Example]
+{
+  "balances": [
+    {
+      "amount": {
+        "asset_code": "USD",
+        "amount": 5700,
+        "decimals":2
+      },
+      "file_count": 57
+    },
+    {
+      "amount": {
+        "asset_code": "EUR",
+        "amount": 5700,
+        "decimals":2
+      },
+      "file_count": 57
+    }
+  ]
+}
+*/
+message ListBalancesResponse {
+  // List of Wallet Balances by Asset Type
+  repeated WalletBalance balances = 1;
+}
+
+/* [Example]
+{
+  "verifier": "zWalletPublicKey"
+}
+*/
+message ListBalanceDetailsRequest {
+
+  // Wallet verifier.
+  string verifier = 1;
+}
+
+/* [Example]
+{
+  "balances": [
+    {
+      "balance": {
+        "amount": {
+          "asset_code": "USD",
+          "amount": 5700,
+          "decimals":2
+        },
+        "file_count": 57
+      },
+      "kind": 0
+    },
+    {
+      "balance": {
+        "amount": {
+          "asset_code": "EUR",
+          "amount": 5700,
+          "decimals":2
+        },
+        "file_count": 57
+      },
+      "kind": 0
+    }
+  ]
+}
+*/
+message ListBalanceDetailsResponse {
+  /* [Example]
+  {
+    "balance": {
+      "amount": {
+        "asset_code": "USD",
+        "amount": 5700,
+        "decimals":2
+      },
+      "file_count": 57
+    },
+    "kind": 0
+  }
+  */
+  message BalanceDetail {
+
+    // Balance Type.
+    enum Kind {
+      // Indicates a balance that is available to be transferred
+      KIND_AVAILABLE = 0;
+      // Indicates a balance that has been earmarked to be transferred
+      KIND_RESERVED  = 1;
+    }
+    // Sum of a particular currency in the wallet
+    WalletBalance balance = 1;
+    // Classification of the balance
+    Kind kind             = 2;
+  }
+
+  // List of Balance Details
+  repeated BalanceDetail balances = 1;
+}
+
+/* [Example]
+{
+  "page": 0,
+  "page_size": 10000,
+  "verifier": "zWalletPublicKey"
+}
+*/
+message ListContractsRequest {
+  // Page number for pagination. First page is '0'.
+  int32 page      = 1;
+  // Elements per page for pagination.
+  int32 page_size = 2;
+  // Wallet verifier.
+  string verifier = 3;
+}
+
+/* [Example]
+{
+  "contracts": [
+    {
+      "contract_id": "9628a2d9-f932-41f0-b2da-b9de3103d945",
+      "contract_type": "Swap",
+      "created": "2022-12-19T16:39:57-08:00",
+      "counterparties": [
+        "zCounterpartyPublicKeyMultibase58Encoded",
+        "zCounterpartyPublicKeyMultibase58Encoded2"
+      ],
+      "status": 1
+    },
+    {
+      "contract_id": "9628a2d9-f932-41f0-b2da-b9de3103d945",
+      "contract_type": "Swap",
+      "created": "2022-12-19T16:39:57-08:00",
+      "counterparties": [
+        "zCounterpartyPublicKeyMultibase58Encoded",
+        "zCounterpartyPublicKeyMultibase58Encoded2"
+      ],
+      "status": 1
+    }
+  ],
+  "totalCount": 2
+}
+*/
+message ListContractsResponse {
+  /* [Example]
+  {
+    "contract_id": "9628a2d9-f932-41f0-b2da-b9de3103d945",
+    "contract_type": "Swap",
+    "created": "2022-12-19T16:39:57-08:00",
+    "counterparties": [
+      "zCounterpartyPublicKeyMultibase58Encoded",
+      "zCounterpartyPublicKeyMultibase58Encoded2"
+    ],
+    "status": 1
+  }
+  */
+  message ContractSummary {
+    // UUID of the contract
+    string contract_id             = 1;
+    // Type of the contract
+    string contract_type           = 2;
+    // RFC3339 timestamp of the contract creation date.
+    string created                 = 3;
+    // List of participant public keys excluding self
+    repeated string counterparties = 4;
+    // Current status of contract
+    string status                  = 5;
+    // Contract memo
+    string memo                    = 6;
+  }
+
+  // List of contracts with status metadata
+  repeated ContractSummary contracts = 1;
+
+  // Total number of contracts
+  uint32 totalCount                  = 2;
+}
+
+/* [Example]
+{
+  "id": "9628a2d9-f932-41f0-b2da-b9de3103d945",
+  "verifier": "zWalletPublicKey"
+}
+*/
+message GetAssetRequest {
+  // UUID of the asset.
+  string id       = 1;
+  // [MultibaseVerifier] Wallet verifier.
+  string verifier = 2;
+}
+
+/* [Example]
+{
+  "asset": {
+    "version": "0.1.0",
+    "id": "ASSET_ID",
+    "currency": "USD",
+    "amount": 100,
+    "decimals": 2,
+    "authority": "zAuthorityPublicKeyMultibase58Encoded",
+    "issuer": "zIssuerPublicKeyMultibase58Encoded",
+    "issuance_date": "2006-01-02T15:04:05Z",
+    "block_depth": 3,
+    "authorization_signature": "ByteLengthAuthSignatureVariesByAlgo=",
+    "transfer_signature": "ByteLengthTransferSignatureVariesByAlgo=",
+    "notaries": [
+      {
+        "did": "did:method-name:zDIDMultibase58Encoded",
+        "signature": "ByteLengthSignatureVariesByAlgo="
+      },
+      {
+        "did": "did:method-name:zDIDMultibase58Encoded",
+        "signature": "ByteLengthSignatureVariesByAlgo="
+      }
+    ]
+  }
+}
+*/
+message GetAssetResponse {
+
+  /* [Example]
+  {
+    "did": "DID_NOTARY",
+    "signature": "ByteLengthAuthSignatureVariesByAlgo="
+  }
+  */
+  message Notary {
+    // DID of Notary
+    string did      = 1;
+    // Signature of Notary
+    bytes signature = 2;
+  }
+
+  /* [Example]
+  {
+    "version": "0.1.0",
+    "id": "ASSET_ID",
+    "currency": "USD",
+    "amount": 100,
+    "decimals": 2,
+    "authority": "zAuthorityPublicKeyMultibase58Encoded",
+    "issuer": "zIssuerPublicKeyMultibase58Encoded",
+    "issuance_date": "2006-01-02T15:04:05Z",
+    "block_depth": 3,
+    "authorization_signature": "ByteLengthAuthSignatureVariesByAlgo=",
+    "transfer_signature": "ByteLengthTransferSignatureVariesByAlgo=",
+    "notaries": [
+      {
+        "did": "did:method-name:zDIDMultibase58Encoded",
+        "signature": "ByteLengthSignatureVariesByAlgo="
+      },
+      {
+        "did": "did:method-name:zDIDMultibase58Encoded",
+        "signature": "ByteLengthSignatureVariesByAlgo="
+      }
+    ]
+  }
+  */
+  message Asset {
+    // Version of the digital banknote file.
+    string version                = 1;
+    // UUID of the digital banknote file.
+    string id                     = 2;
+    // ISO-4217 currency code.
+    string currency               = 3;
+    // Amount of the digital banknote.
+    int64 amount                  = 4;
+    // Decimal precision.
+    uint32 decimals               = 5;
+    // Public key of the monetary Authority.
+    string authority              = 6;
+    // Public key of the Issuer.
+    string issuer                 = 7;
+    // RFC3339 timestamp of the issuance date.
+    string issuance_date          = 8;
+    // Number of signature blocks, representing the owner history.
+    uint32 block_depth            = 9;
+    // Signature of the latest block hash from the Notary.
+    bytes authorization_signature = 10;
+    // Signature of the previous owner.
+    bytes transfer_signature      = 11;
+    // List of Notaries.
+    repeated Notary notaries      = 12;
+  }
+
+  // Asset object
+  Asset asset = 1;
+}
+
+/* [Example]
+{
+  "uetr": "UETR",
+  "verifier": "zWalletPublicKey"
+}
+*/
+message GetContractDetailRequest {
+  // A Unique End-to-end Transaction Reference, string of 36 unique characters.
+  string uetr     = 1;
+  // Wallet verifier.
+  string verifier = 2;
+}
+
+/* [Example]
+{
+  "contract_type": "Asset Swap",
+  "commitments": [
+    {
+      "sender": "zSender1PublicKey",
+      "recipient": "zRecipient1PublicKey",
+      "amount": {
+        "asset_code":"USD",
+        "amount":100,
+        "decimals":2
+      }
+    },
+    {
+      "sender": "zSender2PublicKey",
+      "recipient": "zRecipient1PublicKey",
+      "amount": {
+        "asset_code":"MXN",
+        "amount":100,
+        "decimals":2
+      }
+    }
+  ],
+  "created": "2023-12-19T16:39:56-08:00",
+  "hash_presenter": "zSender1PublicKey",
+  "hash": "d04b98f48e8f8bcc15c6ae5ac050801cd6dcfd428fb5f9e65c4e16e7807340fa",
+  "expiration": "2023-12-19T16:39:57-08:00",
+  "memo": "Currency swap",
+  "log": [
+    {
+      "sender": "zSender1PublicKey",
+      "receiver": "zRecipient1PublicKey",
+      "amount": {
+          "asset_code":"USD",
+          "amount":100,
+          "decimals":2
+      },
+      "timestamp": "2006-01-02T15:04:05Z",
+      "kind": "ContractPayment",
+      "state": "Awaiting",
+      "event": "Received promissory",
+      "promissory_id": "00000000-0000-0000-0000-000000000000"
+    }
+  ]
+}
+*/
+message GetContractDetailResponse {
+  /* [Example]
+  {
+    "sender": "zSender1PublicKey",
+    "receiver": "zRecipient1PublicKey",
+    "amount": {
+        "asset_code":"USD",
+        "amount":100,
+        "decimals":2
+    },
+    "timestamp": "2006-01-02T15:04:05Z",
+    "kind": "ContractPayment",
+    "state": "Awaiting",
+    "event": "Received promissory",
+    "promissory_id": "00000000-0000-0000-0000-000000000000"
+  }
+  */
+  message LogEntry {
+    // [MultibaseVerifier]
+    string sender        = 1;
+    // [MultibaseVerifier]
+    string receiver      = 2;
+    // [Amount] Promissory amount if it applies
+    common.Amount amount = 3;
+    // [RFC3339 Timestamp] Event time
+    string timestamp     = 4;
+    // State machine this occurred in
+    string kind          = 5;
+    // State in the state machine
+    string state         = 6;
+    // Description of the event
+    string event         = 7;
+    // [UUID] The unique identifier of a promissory if it applies
+    string promissory_id = 8;
+  }
+
+  // Type of this contract
+  string contract_type                   = 1;
+  // Lists all fund transfers specified in the contract
+  repeated common.Commitment commitments = 2;
+  // [RFC3339 Timestamp] Time the contract was created
+  string created                         = 4;
+  // [MultibaseVerifier] that is responsible for presenting the secret
+  string hash_presenter                  = 5;
+  // [Sha256 Hash] Hash of the secret
+  bytes hash                             = 6;
+  // [RFC3339 Timestamp] Expiration time of the contract where all funds are returned to all participants
+  string expiration                      = 7;
+  // Human-readable memo field
+  string memo                            = 8;
+  // Log of all interactions of this contract
+  repeated LogEntry log                  = 9;
+}
+
+/* [Example]
+{
+  "uetr": "UETR",
+  "verifier": "zWalletPublicKey"
+}
+*/
+message GetContractTtlRequest {
+  // A Unique End-to-end Transaction Reference, string of 36 unique characters.
+  string uetr     = 1;
+  // Wallet verifier.
+  string verifier = 2;
+}
+
+/* [Example]
+{
+  "contract": "<contents...>"
+}
+*/
+message GetContractTtlResponse {
+  // contract in TTL format
+  string ttl = 1;
+}
+
+/* [Example]
+{
+  "text": "CreateContractText",
+  "verifier": "zWalletPublicKey"
+}
+*/
+message CreateContractRequest {
+  // Text for the CreateContract
+  string text     = 1;
+  // Optional verifier
+  string verifier = 2;
+}
+
+/* [Example]
+{
+  "status": 1,
+  "uetr": "UETR"
+}
+*/
+message CreateContractResponse {
+  // Prepare Margin Swap Status.
+  enum Status {
+    // Status Unspecified.
+    UNSPECIFIED = 0;
+    // Status Successful.
+    SUCCESS     = 1;
+    // Status Unsuccessful.
+    FAILURE     = 2;
+  }
+  // Status of the transaction
+  Status status = 1;
+  // A Unique End-to-end Transaction Reference, string of 36 unique characters.
+  string uetr   = 2;
+}
+
+/* [Example]
+{
+  "ttl": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema# ...>"
+}
+*/
+message ValidateTemplateRequest {
+  // TriG/Turtle string file
+  string ttl = 1;
+}
+
+/* [Example]
+{
+  "nq": "NQ"
+}
+*/
+message ValidateTemplateResponse {
+  // Canonical NQuads response
+  string nq = 1;
+}
+
+/* [Example]
+{
+  "verifier": "zWalletPublicKey",
+  "uetr": "UETR"
+}
+*/
+message GetTransactionStatusRequest {
+  // Verifier
+  string verifier = 1;
+  // A Unique End-to-end Transaction Reference, string of 36 unique characters.
+  string uetr     = 2;
+}
+
+/* [Example]
+{
+  "state": "STATE",
+  "progress": "UETR",
+  "report": "ReportBytes="
+}
+*/
+message GetTransactionStatusResponse {
+  // State
+  string state             = 1;
+  // Optional Progress String
+  optional string progress = 2;
+  // Optional Report Bytes
+  optional bytes report    = 3;
+}
+
+/* [Example]
+{
+  "uetr": "UETR",
+  "verifier": "zWalletPublicKey"
+}
+*/
+message GetTransactionLogRequest {
+  // A Unique End-to-end Transaction Reference, string of 36 unique characters.
+  string uetr     = 1;
+  // Wallet verifier.
+  string verifier = 2;
+}
+
+/* [Example]
+{
+  "log": [
+    {
+      "timestamp": "2006-01-02T15:04:05Z",
+      "kind": "ContractPayment",
+      "state": "Awaiting",
+      "event": "Received promissory"
+    },
+    {
+      "timestamp": "2007-01-02T15:04:05Z",
+      "kind": "ContractPayment",
+      "state": "Awaiting",
+      "event": "Received promissory"
+    }
+  ]
+}
+*/
+message GetTransactionLogResponse {
+  /* [Example]
+  {
+    "timestamp": "2006-01-02T15:04:05Z",
+    "kind": "ContractPayment",
+    "state": "Awaiting",
+    "event": "Received promissory"
+  }
+  */
+  message LogEntry {
+    // [RFC3339 Timestamp] Event time
+    string timestamp = 1;
+    // State machine this occurred in
+    string kind      = 2;
+    // State in the state machine
+    string state     = 3;
+    // Description of the event
+    string event     = 4;
+  }
+
+  // Log of all interactions of this contract
+  repeated LogEntry log = 1;
+}
+
+service AssetController {
+  // List all of the assets of the specified asset type in a given wallet.
+  rpc ListAssets(ListAssetsRequest) returns (ListAssetsResponse);
+
+  // List the balances of each asset type in the wallet.
+  rpc ListBalances(ListBalancesRequest) returns (ListBalancesResponse);
+
+  // Lists more details about balances in a wallet such as how much funds are available vs reserved.
+  rpc ListBalanceDetails(ListBalanceDetailsRequest) returns (ListBalanceDetailsResponse);
+
+  // Lists the history of all Contracts for a given wallet.
+  rpc ListContracts(ListContractsRequest) returns (ListContractsResponse);
+
+  // Get a specific wallet asset by asset ID.
+  rpc GetAsset(GetAssetRequest) returns (GetAssetResponse);
+
+  // Get details of a specific Contract by UETR.
+  rpc GetContractDetail(GetContractDetailRequest) returns (GetContractDetailResponse);
+
+  // Get details of a specific Contract by UETR in RDF 1.1 Turtle format.
+  rpc GetContractTtl(GetContractTtlRequest) returns (GetContractTtlResponse);
+
+  // Create a new Contract with detailed specifics defined in RDF 1.1 Turtle format.
+  rpc CreateContract(CreateContractRequest) returns (CreateContractResponse);
+
+  // Validate a Contract template in RDF 1.1 Turtle format, producing any errors as a gRPC status.
+  rpc ValidateTemplate(ValidateTemplateRequest) returns (ValidateTemplateResponse);
+
+  // Create a new transaction using Contracts 2.0
+  rpc GetTransactionStatus(GetTransactionStatusRequest) returns (GetTransactionStatusResponse);
+
+  // Create a logs for a transaction using Contracts 2.0
+  rpc GetTransactionLog(GetTransactionLogRequest) returns (GetTransactionLogResponse);
+}
