@@ -1,0 +1,155 @@
+syntax = "proto3";
+package common;
+
+import "common/v1/packet.proto";
+
+// THIS PROTO FILE IS INTENDED FOR USE FOR KNOX AND KNOX CUSTOMERS.
+
+// Payload Type, subject to change.
+enum PayloadType {
+  // New Transaction payload, subject to change.
+  NewTransaction     = 0;
+  // Ack Proposal payload, subject to change.
+  AckProposal        = 1;
+  // Acked Proposal payload, subject to change.
+  ProposalAcked      = 2;
+  // Nacked Proposal payload, subject to change.
+  ProposalNacked     = 3;
+  // Reveal Secret payload, subject to change.
+  RevealSecret       = 4;
+  // Revealed Secret payload, subject to change.
+  SecretRevealed     = 5;
+  // Received Secret payload, subject to change.
+  ReceiveSecret      = 6;
+  // Received Termination payload, subject to change.
+  ReceiveTermination = 7;
+}
+
+// Termination Result, subject to change.
+enum TerminationResult {
+  // Contract Failed, subject to change.
+  ContractFailed = 0;
+  // Transaction Failed, subject to change.
+  TxnFailed      = 1;
+  // Transaction Completed, subject to change.
+  TxnCompleted   = 2;
+}
+
+/* [Example]
+{
+  "payload_type": 1,
+  "data": "xDATAxBYTES="
+}
+*/
+message Payload {
+  // Payload type.
+  PayloadType payload_type = 1;
+  // Payload data.
+  bytes data               = 2;
+}
+
+/*
+{
+  "participant": "zParticipantPublicKey",
+  "contract": "xCONTRACTxBYTES="
+}
+*/
+message NewTransactionData {
+  // Participant Public Key.
+  string participant = 1;
+  // Contract.
+  bytes contract     = 2;
+}
+
+/*
+{
+  "participant": "zParticipantPublicKey",
+  "contract": "xCONTRACTxBYTES=",
+  "originator": "zOriginatorPublicKey"
+}
+*/
+message AckProposalData {
+  // Participant Public Key.
+  string participant = 1;
+  // Contract.
+  bytes contract     = 2;
+  // Originator Public Key.
+  string originator  = 3;
+}
+
+/*
+{
+  "participant": "zParticipantPublicKey",
+  "contract": "xCONTRACTxBYTES=",
+  "originator": "zOriginatorPublicKey"
+}
+*/
+message ProposalAckNackData {
+  // Participant Public Key.
+  string participant = 1;
+  // Contract.
+  bytes contract     = 2;
+  // Originator Public Key.
+  string originator  = 3;
+}
+
+/* [Example]
+{
+  "participant": "zParticipantPublicKey",
+  "contract_id": "a18f7224-a7c1-41f8-b14f-75e920b8ea81"
+}
+*/
+message RevealSecretData {
+  // Participant Public Key.
+  string participant = 1;
+  // Contract ID.
+  string contract_id = 2;
+}
+
+/* [Example]
+{
+  "participant": "zParticipantPublicKey",
+  "contract_id": "a18f7224-a7c1-41f8-b14f-75e920b8ea81",
+  "secret": "SecretBytes"
+}
+*/
+message SecretRevealedData {
+  // Participant Public Key.
+  string participant = 1;
+  // Contract ID.
+  string contract_id = 2;
+  // Base64 Encoding of Secret bytes.
+  string secret      = 3;
+}
+
+/* [Example]
+{
+  "participant": "zParticipantPublicKey",
+  "contract_id": "a18f7224-a7c1-41f8-b14f-75e920b8ea81",
+  "secret": "SecretBytes"
+}
+*/
+message ReceiveSecretData {
+  // Participant Public Key.
+  string participant = 1;
+  // Contract ID.
+  string contract_id = 2;
+  // Base64 Encoding of Secret bytes.
+  string secret      = 3;
+}
+
+/* [Example]
+{
+  "participant": "zParticipantPublicKey",
+  "contract_id": "a18f7224-a7c1-41f8-b14f-75e920b8ea81",
+  "result": "Completed"
+}
+*/
+message ReceiveTerminationData {
+  // Participant Public Key.
+  string participant       = 1;
+  // Contract ID.
+  string contract_id       = 2;
+  // Result.
+  TerminationResult result = 3;
+}

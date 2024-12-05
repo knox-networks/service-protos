@@ -1,0 +1,530 @@
+syntax = "proto3";
+package common;
+
+// THIS PROTO FILE IS INTENDED FOR USE FOR KNOX AND KNOX CUSTOMERS.
+
+// Indicates the interbank service type associated with a particular endpoint or routable identifier - these
+// enumerations are returned in Service info calls. Any service type marked 'Reserved' should not be directly used.
+enum ServiceType {
+  // Service type unknown guards against accidental use of a zero value.
+  UnknownService     = 0;
+  // The gateway Service.
+  Gateway            = 1;
+  // Notary Service (Reserved).
+  Notary             = 2;
+  // The Authority Service.
+  Authority          = 3;
+  // The Treasury Service.
+  Treasury           = 4;
+  // The Emissary Service (Reserved).
+  Emissary           = 5;
+  // The Shared Service (Reserved).
+  Shared             = 6;
+  // The Identity Service (Reserved).
+  Identity           = 7;
+  // The Vault Service (Reserved).
+  Vault              = 8;
+  // The Custodial Wallet Service.
+  CustodialWallet    = 9;
+  // The Issuer Service.
+  Issuer             = 10;
+  // The Overload Service (Reserved).
+  Overload           = 11;
+  // The Faucet Service (Reserved).
+  Faucet             = 12;
+  // The TransactionManager Service (Reserved).
+  TransactionManager = 13;
+  // The Recovery Service (Reserved).
+  Recovery           = 14;
+  // The Banksim Service (Reserved).
+  Banksim            = 15;
+}
+
+// Used to denote the cryptographic signing & verifying algorithm associated with a particular digital signature or
+// verifier (public key).
+enum SignatureSystem {
+  // The unspecified value is used to guard against accidental use of a zero value.
+  SIGNATURE_SYSTEM_UNSPECIFIED = 0;
+  // The ED25519 signature system
+  SIGNATURE_SYSTEM_ED25519     = 1;
+  // The SECP2516 signature system
+  SIGNATURE_SYSTEM_SECP256K1   = 2;
+}
+
+// Holds a bytes value public key in the `verifier` field that allows verification using the digital signature algorithm
+// indicated by the `signature_system`.
+/* [Example]
+{
+  "signature_system": 1,
+  "verifier": "VerifierLengthChangesByAlgo="
+}
+*/
+message DynamicVerifier {
+  // Signature system of the verifying key.
+  SignatureSystem signature_system = 1;
+  // Public key used in verifying digital signature authenticity.
+  bytes verifier                   = 2;
+}
+
+// IEEE 754 decimal128 compatible amount type constructed from `amount` (the significand/mantissa) and `decimals` (the
+// inverse exponent) for use with floating point arithmetic and decimal 128 compatible libraries. Ex. An `amount` of
+// 12345 and `decimals` of 2 is equivalent to "123.45".
+/* [Example]
+{
+  "asset_code":"USD",
+  "amount":100,
+  "decimals":2
+}
+*/
+message Amount {
+  // ISO-4217 currency code to denote remitting Digital Banknotes in a specific currency.
+  string asset_code = 1;
+  // Signed 64 bit representation of the significand.
+  int64 amount      = 2;
+  // Unsigned 32 bit representation of the decimal precision, i.e. the inverse of the exponent. The allowed value is
+  // determined by the rust_decimal crate, which allows a scale (decimal) between 0-28 inclusive. e.g. amount = 10,
+  // decimals = 2 => value 0.01.
+  uint32 decimals   = 3;
+}
+
+// Represents a desired denomination distribution.
+// map<mantissa, quantity>
+// sum must match corresponding amount.amount
+/* [Example]
+{
+  "value": [
+    {
+      "key": 20,
+      "value": 2
+    },
+    {
+      "key": 50,
+      "value": 1
+    },
+    {
+      "key": 10,
+      "value": 1
+    }
+  ]
+}
+*/
+message Distribution {
+  // Distribution Values and Amounts.
+  map<int64, int32> value = 1;
+}
+
+// Used to start an authentication flow
+/* [Example]
+{
+  "verifier": {
+    "signature_system": 1,
+    "verifier": "VerifierLengthChangesByAlgo="
+  }
+}
+*/
+message AuthenticationRequest {
+  // Verifier of the requester.
+  DynamicVerifier verifier = 1;
+  // UUID representing a distinct gateway client.
+  string connection_id     = 2;
+}
+
+// The returns a challenge nonce meant to be signed by the requester's private key.
+/* [Example]
+{
+  "challenge": "ByteLengthChallengeVariesByAlgo="
+}
+*/
+message AuthenticationResponse {
+  // Random unique string to be signed by the authorized key.
+  bytes challenge = 1;
+}
+
+// Presented when establishing a gateway connection. `request_type` type indicates whether there will be one or more
+// verifiers (public keys) associated with a particular connection. The primary verifier (connection owner) is
+// represented by the `signature.verifier` field.
+/* [Example]
+{
+  "associated_keys": [
+    "VerifierLengthChangesByAlgo="
+  ],
+  "signature": {
+    "verifier": {
+      "signature_system": 1,
+      "verifier": "VerifierLengthChangesByAlgo="
+    },
+    "signature": "ByteLengthSignatureVariesByAlgo="
+  },
+  "connection_id": "CONNECTION_ID"
+}
+*/
+message ConnectionRequest {
+  // Associated connections may be any routing keys that can be decoded from bytes
+  repeated bytes associated_keys    = 1;
+  // The crypto signature and signers public key.
+  AuthenticationSignature signature = 4;
+  // UUID representing a distinct gateway client.
+  string connection_id              = 5;
+}
+
+// Presented when establishing a gateway connection as a field of `ConnectionRequest`. The `verifier` should match the
+// verifier used in `AuthenticationRequest`. The `bytes` field is the signed nonce from `AuthenticationResponse`.
+/* [Example]
+{
+  "verifier": {
+    "signature_system": 1,
+    "verifier": "VerifierLengthChangesByAlgo="
+  },
+  "signature": "ByteLengthSignatureVariesByAlgo="
+}
+*/
+message AuthenticationSignature {
+  // Verifier of the requester.
+  DynamicVerifier verifier = 1;
+  // Cryptographic signature of the challenge nonce.
+  bytes signature          = 2;
+}
+
+// Authorized digital banknote returned in the Notary service flow.
+/* [Example]
+{
+  "promissory_file": "FileByteLengthVaries="
+}
+*/
+message AuthorizedSignatureResponse {
+  // Return digital banknote with authorized signature.
+  bytes promissory_file = 1;
+}
+
+// Media - Mime type and binary data encoding For common MIME types see:
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+/* [Example]
+{
+  "mime_type": "MIME_TYPE",
+  "data": "ByteLengthDataVaries="
+}
+*/
+message Media {
+  // Mime type URI.
+  string mime_type = 1;
+  // Media data.
+  bytes data       = 2;
+}
+
+// Resource based access control (RBAC) role used to define currency limits for a public key that the issuer allows to
+// create issuance requests.
+/* [Example]
+{
+  "verifier": "VerifierLengthVariesByAlgo",
+  "role_enum": {
+    "issue_permissions": {
+      "inner": [
+        {
+          "asset_code":"USD",
+          "amount":100,
+          "decimals":2
+        },
+        {
+          "asset_code":"USD",
+          "amount":500,
+          "decimals":2
+        }
+      ]
+    }
+  }
+}
+*/
+message Role {
+  // MultibaseVerifier.
+  string verifier = 1;
+
+  /* [Example]
+  {
+    "inner": [
+      {
+        "asset_code":"USD",
+        "amount":100,
+        "decimals":2
+      },
+      {
+        "asset_code":"USD",
+        "amount":500,
+        "decimals":2
+      }
+    ]
+  }
+  */
+  message IssuePermissions {
+    // The amounts up to which issuance is authorized in respective currencies.
+    repeated Amount inner = 2;
+  }
+
+  // The role granted by an Issuer to an entity to make issuance requests.
+  oneof role_enum {
+    // Authorized Role allows authorized keys to request a challenge nonce. Authorized keys must have additional role
+    // permissions to use signed challenge nonce.
+    bool authorized                    = 3;
+    // Issuer Role Permissions.
+    IssuePermissions issue_permissions = 4;
+  }
+}
+
+// Request the identity of a given service endpoint, e.g. Issuer, Authority, Treasury.
+/* [Example]
+{}
+*/
+message GetVerifierRequest {}
+
+// Response that contains the verifier (public key) of a service endpoint. Returns both Dynamic Verifier bytes, and
+// multibase encoded formats.
+/* [Example]
+{
+  "bytes": {
+    "signature_system": 1,
+    "verifier": "VerifierLengthChangesByAlgo="
+  },
+  "multibase": "MULTIBASE"
+}
+*/
+message GetVerifierResponse {
+  // Verifier (public key) in Dynamic verifier format.
+  DynamicVerifier bytes = 1;
+  // Verifier (public key) in multibase encoding.
+  string multibase      = 2;
+}
+
+// Request the `ServiceType` of a given service endpoint. e.g. Issuer, Authority, Treasury.
+/* [Example]
+{}
+*/
+message GetServiceTypeRequest {}
+
+// Response that contains the `ServiceType` of a service endpoint.
+/* [Example]
+{
+  "service_type": 1
+}
+*/
+message GetServiceTypeResponse {
+  // One of the service types defined in ServiceType.
+  ServiceType service_type = 1;
+}
+
+// GetInstanceRequest - Request the Instance of the service, a value generated each time a service
+// is started, can be correlated to a gateway connection_id
+/* [Example]
+{}
+*/
+message GetInstanceRequest {}
+
+// GetInstanceResponse - Respond with a UUID of the particular instance
+/* [Example]
+{
+  "instance_id": "INSTANCE_ID"
+}
+*/
+message GetInstanceResponse {
+  // Instance ID.
+  string instance_id = 1;
+}
+
+// Initiates a Funds Change transaction. Sender is implied to be the owner of the promissories to be sent. Recipient is
+// the well known Treasury verifier provided at startup.
+/* [Example]
+{
+  "amount": {
+    "asset_code":"USD",
+    "amount":100,
+    "decimals":2
+  },
+  "promissory": "PROMISSORY_ID_1",
+  "user_reference": "USER_PROVIDED_REFERENCE"
+}
+*/
+message StartFundsChangeRequest {
+  // The specific amount that the returned change must be able to make a payment of. Inclusive of currency.
+  common.Amount amount  = 1;
+  // The Digital Banknote to be replaced by other denominations. The  change returned will be a number of digital
+  // banknotes totalling the same value as this digital banknote.
+  string promissory     = 2;
+  // User provided reference.
+  string user_reference = 3;
+}
+
+// Returns the Universal E2E Transaction Reference (UUID v4 format) of a successfully initiated Funds Change
+// transaction.
+/* [Example]
+{
+  "uetr": "UETR"
+}
+*/
+message StartFundsChangeResponse {
+  // Universal E2E Transaction Reference (UUID v4 format).
+  string uetr = 1;
+}
+
+// Logical Operator Options.
+enum LogicalOperator {
+  // Logical Operator Unspecified.
+  LOGICAL_OPERATOR_UNSPECIFIED = 0;
+  // Logical Operator AND.
+  LOGICAL_OPERATOR_AND         = 1;
+  // Logical Operator OR.
+  LOGICAL_OPERATOR_OR          = 2;
+}
+
+/* [Example]
+{
+  "field": "FIELD",
+  "operator": 0,
+  "value": {
+    "str_value": "STRINGVAL"
+  }
+}
+*/
+message FilterItem {
+  // Filter Operator Options.
+  enum FilterOperator {
+    // Filter Operator Unspecified.
+    FILTER_OPERATOR_UNSPECIFIED = 0;
+    // Filter Operator Equals "=".
+    FILTER_OPERATOR_EQ          = 1;
+    // Filter Operator Does Not Equal "!="
+    FILTER_OPERATOR_NE          = 2;
+    // Filter Operator Greater Than ">"
+    FILTER_OPERATOR_GT          = 3;
+    // Filter Operator Greater Than or Equal To ">="
+    FILTER_OPERATOR_GTE         = 4;
+    // Filter Operator Less Than "<"
+    FILTER_OPERATOR_LT          = 5;
+    // Filter Operator Less Than or Equal to "<="
+    FILTER_OPERATOR_LTE         = 6;
+    // Filter Operator IN
+    FILTER_OPERATOR_IN          = 7;
+    // Filter Operator NOT IN
+    FILTER_OPERATOR_NOT_IN      = 8;
+  }
+
+  // Field.
+  string field = 1;
+
+  // Operator.
+  FilterOperator operator = 2;
+
+  // Value of Operator.
+  oneof value {
+    // String Value of Operator, e.g. "abc".
+    string str_value              = 3;
+    // Integer Value of Operator, e.g. 123.
+    int64 int_value               = 4;
+    // Boolean Value of Operator, e.g. true.
+    bool bool_value               = 5;
+    // RFC3339 DateTime Value of Operator, e.g. "2019-10-12T07:20:50.52Z".
+    string rfc3339_datetime_value = 6;
+    // UUID Value of Operator, e.g. "123e4567-e89b-12d3-a456-426655440000".
+    string uuid_value             = 7;
+  }
+}
+
+/* [Example]
+{
+  "filters": [
+    {
+      "field": "FIELD1",
+      "operator": 0,
+      "value": {
+        "str_value": "STRINGVAL"
+      }
+    },
+    {
+      "field": "FIELD2",
+      "operator": 0,
+      "value": {
+        "int_value": 10
+      }
+    },
+    {
+      "field": "FIELD3",
+      "operator": 0,
+      "value": {
+        "bool_value": false
+      }
+    }
+  ],
+  "operator": 0
+}
+*/
+message Filter {
+  // List of Filters.
+  repeated FilterItem filters = 1;
+  // Operator for Filter.
+  LogicalOperator operator = 2;
+}
+
+// Sorting Direction, i.e. ascending or descending.
+enum SortDirection {
+  // Sort Direction Unspecified.
+  SORT_DIRECTION_UNSPECIFIED = 0;
+  // Sort Direction Ascending, i.e. Low to High
+  SORT_DIRECTION_ASCENDING   = 1;
+  // Sort Direction Ascending, i.e. High to Low
+  SORT_DIRECTION_DESCENDING  = 2;
+}
+
+/* [Example]
+{
+  "field": "FIELD",
+  "direction": 0
+}
+*/
+message SortItem {
+  // Name of the field to sort on.
+  string field            = 1;
+  // Direction of the sort.
+  SortDirection direction = 2;
+};
+
+/* [Example]
+{
+  "items": [
+    {
+      "field": "FIELD1",
+      "direction": 0
+    },
+    {
+      "field": "FIELD2",
+      "direction": 0
+    }
+  ]
+}
+*/
+message SortBy {
+  // List of sort items.
+  repeated SortItem items = 1;
+}
+
+/* [Example]
+{
+  "verifier": "VerifierLengthVariesByAlgo",
+  "url": "AUTHORITY_URL"
+}
+*/
+message AssetAuthority {
+  // Verifier of the Asset Authority.
+  string verifier = 1;
+  // URL of the Asset Authority.
+  string url      = 2;
+}
+
+/* [Example]
+{
+  "denominations": [1, 5, 10, 25, 100, 200, 500, 1000],
+  "precision": 2
+}
+*/
+message AssetDenomination {
+  // Denominations allowed, e.g. [1, 5, 10, 25, 100, etc.].
+  repeated int64 denominations = 1;
+  // Precision for Asset (decimals places), e.g. USD $1.00 = 2.
+  uint32 precision             = 2;
+}

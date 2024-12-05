@@ -1,0 +1,52 @@
+syntax = "proto3";
+package common;
+
+import "common/v1/common.proto";
+
+// THIS PROTO FILE IS INTENDED FOR INTERNAL KNOX USE ONLY.
+
+// ServiceInfo is a common service implemented by several applications so that a service endpoint can be queried to
+// determine the type of service and its public key (i.e. verifier).
+service ServiceInfo {
+  // GetVerifier returns the public key associated with a service endpoint.
+  rpc GetVerifier(GetVerifierRequest) returns (GetVerifierResponse);
+  // GetServiceType returns the type of service provided by the endpoint.
+  rpc GetServiceType(GetServiceTypeRequest) returns (GetServiceTypeResponse);
+  // GetInstance returns an instance UUID that is distinct per startup
+  rpc GetInstance(GetInstanceRequest) returns (GetInstanceResponse);
+}
+
+// IsProvisionedRequest - Request the service to determine if it is provisioned to perform its duties
+/* [Example]
+{}
+*/
+message IsProvisionedRequest {}
+
+// IsProvisionedResponse - Respond with the provision status of the service
+/* [Example]
+{
+  "status": 1,
+  "reason": "REASON"
+}
+*/
+message IsProvisionedResponse {
+  // Status of Provisioned Service.
+  enum Status {
+    // Unknown Provisioning Status.
+    STATUS_UNKNOWN         = 0;
+    // Provisioned.
+    STATUS_PROVISIONED     = 1;
+    // Not Provisioned.
+    STATUS_NOT_PROVISIONED = 2;
+  }
+  // Provisioning Status.
+  Status status = 1;
+  // Provisioning Status Reason.
+  string reason = 2;
+}
+
+// Check the Status of a Service.
+service StatusService {
+  // Checks Whether Service is Provisioned.
+  rpc IsProvisioned(IsProvisionedRequest) returns (IsProvisionedResponse);
+}
