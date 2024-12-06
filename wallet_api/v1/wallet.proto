@@ -1,0 +1,380 @@
+syntax = "proto3";
+
+package wallet_api.v1;
+
+import "common/v1/common.proto";
+import "common/v1/packet.proto";
+import "google/protobuf/empty.proto";
+
+// THIS PROTO FILE IS INTENDED FOR USE FOR KNOX AND KNOX CUSTOMERS.
+
+/* [Example]
+{
+  "owner_name": "OWNER_NAME"
+}
+*/
+message CreateOwnerRequest {
+  // Name of the wallet owner.
+  string owner_name = 1;
+}
+
+/* [Example]
+{
+  "owner_id": "eyJwtHeader.eyJwtPayload.Secret",
+  "api_key": "API_KEY",
+  "owner_name": "OWNER_NAME"
+}
+*/
+message CreateOwnerResponse {
+  // UUID of the created owner of the wallet(s).
+  string owner_id   = 1;
+  // API key given to the wallet owner as part of creation.
+  string api_key    = 2;
+  // Name of the wallet owner.
+  string owner_name = 3;
+}
+
+/* [Example]
+{
+  "wallet_name": "WALLET_NAME",
+  "api_key": "API_KEY"
+}
+*/
+message CreateWalletRequest {
+  // Human friendly name of the wallet.
+  string wallet_name = 1;
+  // API key given to the wallet owner at the time of owner creation.
+  string api_key     = 2;
+}
+
+/* [Example]
+{
+  "wallet_id": "zWalletIDMultibase58Encoded",
+  "wallet_name": "WALLET_NAME",
+  "public_key": "zPublicKeyMultibase58Encoded",
+  "did": "did:method-name:zDIDMultibase58Encoded"
+}
+*/
+message CreateWalletResponse {
+  // UUID of the wallet.
+  string wallet_id   = 1;
+  // Human friendly name of the wallet.
+  string wallet_name = 2;
+  // Public key of the wallet.
+  string public_key  = 3;
+  // W3C Decentralized Identifier (DID) of the wallet.
+  string did         = 4;
+}
+
+/* [Example]
+{
+  "page": 0,
+  "page_size": 10,
+  "api_key": "API_KEY",
+  "filters": {
+    "filters": [
+      {
+        "field": "FIELD1",
+        "operator": 0,
+        "value": {
+          "str_value": "STRINGVAL"
+        }
+      },
+      {
+        "field": "FIELD2",
+        "operator": 0,
+        "value": {
+          "int_value": 10
+        }
+      },
+      {
+        "field": "FIELD3",
+        "operator": 0,
+        "value": {
+          "bool_value": false
+        }
+      }
+    ],
+    "operator": 0
+  },
+  "sort_by": {
+    "items": [
+      {
+        "field": "FIELD1",
+        "direction": 0
+      },
+      {
+        "field": "FIELD2",
+        "direction": 0
+      }
+    ]
+  }
+}
+*/
+message ListWalletsRequest {
+  // Page number for pagination.
+  int32 page            = 1;
+  // Size of the page for pagination.
+  int32 page_size       = 2;
+  // API key given to the wallet owner at the time of owner creation.
+  string api_key        = 3;
+  // Potential filters to apply to the list of wallets.
+  common.Filter filters = 4;
+  // Potential sort to apply to the list of wallets.
+  common.SortBy sort_by = 5;
+}
+
+/* [Example]
+{
+  "wallets": [
+    {
+      "wallet_name": "WALLET1",
+      "wallet_id": "zWalletIDMultibase58Encoded",
+      "public_key": "zPublicKeyMultibase58Encoded",
+      "did": "did:method-name:zDIDMultibase58Encoded"
+    },
+    {
+      "wallet_name": "WALLET2",
+      "wallet_id": "zWalletIDMultibase58Encoded",
+      "public_key": "zPublicKeyMultibase58Encoded",
+      "did": "did:method-name:zDIDMultibase58Encoded"
+    }
+  ],
+  "total_owned_wallets": 5
+}
+*/
+message ListWalletsResponse {
+  /* [Example]
+  {
+    "wallet_name": "WALLET1",
+    "wallet_id": "zWalletIDMultibase58Encoded",
+    "public_key": "zPublicKeyMultibase58Encoded",
+    "did": "did:method-name:zDIDMultibase58Encoded"
+  }
+  */
+  message Wallet {
+    // Human friendly name of the wallet.
+    string wallet_name = 1;
+    // UUID of the wallet.
+    string wallet_id   = 2;
+    // Public key of the wallet.
+    string public_key  = 3;
+    // W3C Decentralized Identifier (DID) of the wallet.
+    string did         = 4;
+  }
+  // List of Wallet objects.
+  repeated Wallet wallets    = 1;
+  // Number of wallets belonging to the owner.
+  uint32 total_owned_wallets = 2;
+}
+
+/* [Example]
+{
+  "page": 0,
+  "page_size": 10000,
+  "wallet_id": "zWalletIDMultibase58Encoded",
+  "api_key": "API_KEY",
+  "filters": {
+    "filters": [
+      {
+        "field": "FIELD1",
+        "operator": 0,
+        "value": {
+          "str_value": "STRINGVAL"
+        }
+      },
+      {
+        "field": "FIELD2",
+        "operator": 0,
+        "value": {
+          "int_value": 10
+        }
+      },
+      {
+        "field": "FIELD3",
+        "operator": 0,
+        "value": {
+          "bool_value": false
+        }
+      }
+    ],
+    "operator": 0
+  },
+  "page": 0,
+  "page_size": 10000,
+  "sort_by": {
+    "items": [
+      {
+        "field": "FIELD1",
+        "direction": 0
+      },
+      {
+        "field": "FIELD2",
+        "direction": 0
+      }
+    ]
+  }
+}
+*/
+message ListCredentialsRequest {
+  // Page number for pagination.
+  int32 page            = 1;
+  // Size of the page for pagination.
+  int32 page_size       = 2;
+  // UUID of the wallet.
+  string wallet_id      = 3;
+  // API key given to the wallet owner at the time of owner creation.
+  string api_key        = 4;
+  // Potential filters to apply to the list of credentials.
+  common.Filter filters = 5;
+  // Potential sort to apply to the list of credentials.
+  common.SortBy sort_by = 6;
+}
+
+/* [Example]
+{
+  "credentials": [
+    "CREDENTIAL1",
+    "CREDENTIAL2"
+  ],
+  "total_owned_credentials": 2
+}
+*/
+message ListCredentialsResponse {
+  // Can be one or many of credential types. Ex. "BankAccount", "PermanentResidentCard", "VerifiableCredential"
+  repeated string credentials    = 1;
+  // Number of credentials belonging to the wallet.
+  uint32 total_owned_credentials = 2;
+}
+
+/* [Example]
+{
+  "credential_type":"CREDENTIAL_TYPE",
+  "wallet_id": "zWalletIDMultibase58Encoded",
+  "api_key": "API_KEY"
+}
+*/
+message AddCredentialRequest {
+  // Type of Verifiable Credential- Ex "BankAccount", "PermanentResidentCard".
+  string credential_type = 1;
+  // UUID of the wallet.
+  string wallet_id       = 2;
+  // API key given to the wallet owner at the time of owner creation.
+  string api_key         = 3;
+}
+
+/* [Example]
+{
+  "credential": "CREDENTIAL"
+}
+*/
+message AddCredentialResponse {
+  // W3C Verifiable Credential representing the subject.
+  string credential = 1;
+}
+
+/* [Example]
+{
+  "wallet_id": "zWalletIDMultibase58Encoded",
+  "api_key": "API_KEY"
+}
+*/
+message AssociateWalletRequest {
+  // UUID of the wallet.
+  string wallet_id = 1;
+  // API key given to the wallet owner at the time of owner creation.
+  string api_key   = 2;
+}
+
+/* [Example]
+{
+  "wallet_id": "zWalletIDMultibase58Encoded",
+  "did": "did:method-name:zDIDMultibase58Encoded",
+  "public_key": "zPublicKeyMultibase58Encoded"
+}
+*/
+message AssociateWalletResponse {
+  // UUID of the wallet.
+  string wallet_id  = 1;
+  // W3C Decentralized Identifier (DID) of the wallet.
+  string did        = 2;
+  // Public key of the wallet.
+  string public_key = 3;
+}
+
+/* [Example]
+{
+  "did": "did:method-name:zDIDMultibase58Encoded",
+  "credential_type": "CREDENTIAL_TYPE",
+  "api_key": "API_KEY"
+}
+*/
+message RequestPresentationRequest {
+  // W3C Decentralized Identifier (DID) of the wallet.
+  string did             = 1;
+  // Type of Verifiable Credential - e.g., "BankAccount", "PermanentResidentCard".
+  string credential_type = 2;
+  // API key given to the wallet owner at the time of owner creation.
+  string api_key         = 3;
+}
+
+/* [Example]
+{
+  "presentation": "PRESENTATION"
+}
+*/
+message RequestPresentationResponse {
+  // The JSON Verifiable Presentation containing the PII of the subject.
+  string presentation = 1;
+}
+
+/* [Example]
+{
+  "wallet_id": "zWalletIDMultibase58Encoded",
+  "api_key": "API_KEY",
+  "uetr": "UETR",
+  "accepted": true
+}
+*/
+message ResumePausedTransactionRequest {
+  // UUID of the wallet.
+  string wallet_id = 1;
+  // API key given to the wallet owner at the time of owner creation.
+  string api_key   = 2;
+  // A Unique End-to-end Transaction Reference, string of 36 unique characters.
+  string uetr      = 3;
+  // Bool to indicate whether to accept or reject the transaction.
+  bool accept      = 4;
+}
+
+/* [Example]
+{}
+*/
+message ResumePausedTransactionResponse {}
+
+// Transacts and holds digital banknotes and bank customer information required for financial compliance, in the form of
+// a W3C Verifiable Credential (https://www.w3.org/TR/vc-data-model).  This is a server side wallet solution in lieu of
+// a mobile wallet, hosted by the bank on behalf of the customer who opts in to do so. Can also be used by institutions,
+// e.g. a financial institution vault.
+service CustodialWallet {
+  // Creates an owned and API key for access to future custodial wallet interactions.  Ex Could be a bank that may
+  // manage many customer custodial wallets.
+  rpc CreateOwner(CreateOwnerRequest) returns (CreateOwnerResponse);
+  // Creates a wallet for a given owner, which can manage the wallet.
+  rpc CreateWallet(CreateWalletRequest) returns (CreateWalletResponse);
+  // List all wallets for a given owner.
+  rpc ListWallets(ListWalletsRequest) returns (ListWalletsResponse);
+  // Lists the W3C Verifiable Credentials of the wallet subject.
+  rpc ListCredentials(ListCredentialsRequest) returns (ListCredentialsResponse);
+  // Adds the specified W3C Verifiable Credential type for the wallet by calling out to the Credential Adapter. Based on
+  // the bearer JWT token provided by User Management to ensure the caller has been authenticated and authorized.
+  rpc AddCredential(AddCredentialRequest) returns (AddCredentialResponse);
+  // Associates the wallet with the account specified in the bearer JWT token provided by User Management.
+  rpc AssociateWallet(AssociateWalletRequest) returns (AssociateWalletResponse);
+  // Returns the JSON Verifiable Presentation containing the PII of the subject.
+  rpc RequestPresentation(RequestPresentationRequest) returns (RequestPresentationResponse);
+  // Resume a transaction that is paused and waiting for input.
+  rpc ResumePausedTransaction(ResumePausedTransactionRequest) returns (ResumePausedTransactionResponse);
+  // Refresh gateway client associated connections.
+  rpc RefreshConnections(google.protobuf.Empty) returns (google.protobuf.Empty);
+}
