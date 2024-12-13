@@ -1,0 +1,778 @@
+syntax = "proto3";
+
+package banksim_api.v1;
+
+import "common/v1/common.proto";
+
+/* [Example]
+{
+  "verifier": "z6MkguHbTD6UYKQxcuM5XdpPyWBW1ZStohFy17VYDvedu9jw",
+  "institution": "coqeifhm",
+  "balances": {
+    "traditional": [
+      {
+        "asset_code": "USD",
+        "amount": 3210,
+        "decimals": 2
+      }
+    ]
+  }
+}
+*/
+message OwnerBalances {
+  // The verifier of the owner.
+  string verifier             = 1;
+  // Optional id of related institution
+  optional string institution = 3;
+  // The balances held by the owner.
+  AssetBalances balances      = 2;
+}
+
+/* [Example]
+{
+  "traditional": [
+    {
+      "asset_code": "USD",
+      "amount": 3210,
+      "decimals": 2
+    }
+  ],
+  "tokens": [
+    {
+      "asset_code": "USD",
+      "amount": 200,
+      "decimals": 2
+    }
+  ],
+  "tokens_minted": [
+    {
+      "asset_code": "USD",
+      "amount": 210,
+      "decimals": 2
+    }
+  ],
+  "tokens_burned": [
+    {
+      "asset_code": "USD",
+      "amount": 10,
+      "decimals": 2
+    }
+  ],
+  "external": [
+    {
+      "asset_code": "USD",
+      "amount": 3210,
+      "decimals": 2
+    }
+  ]
+}
+*/
+message AssetBalances {
+  // List of traditional asset balances held by the owner.
+  repeated common.Amount traditional   = 1;
+  // List of token balances held by the owner.
+  repeated common.Amount tokens        = 2;
+  // List of tokens minted from account assets.
+  repeated common.Amount tokens_minted = 3;
+  // List of tokens burned back into account assets.
+  repeated common.Amount tokens_burned = 4;
+  // List of external asset balances held by the owner.
+  repeated common.Amount external      = 5;
+}
+
+/* [Example]
+{
+  "verifier": "z6MkguHbTD6UYKQxcuM5XdpPyWBW1ZStohFy17VYDvedu9jw",
+  "institution": "coqeifhm",
+  "balances": [
+    {
+      "asset_code": "USD",
+      "amount": 3210,
+      "decimals": 2
+    }
+  ]
+}
+*/
+message AddOwnerRequest {
+  // The verifier of the owner of the balances.
+  string verifier                 = 1;
+  // Optional id of related institution
+  optional string institution     = 3;
+  // List of traditional asset balances held by the owner.
+  repeated common.Amount balances = 2;
+}
+
+/* [Example]
+{}
+*/
+message AddOwnerResponse {}
+
+/* [Example]
+{
+  "verifier": "z6MkguHbTD6UYKQxcuM5XdpPyWBW1ZStohFy17VYDvedu9jw"
+}
+*/
+message GetOwnerBalancesRequest {
+  // The verifier of the owner that holds the balances.
+  string verifier = 1;
+}
+
+/* [Example]
+{
+  "owner": {
+    "verifier": "z6MkguHbTD6UYKQxcuM5XdpPyWBW1ZStohFy17VYDvedu9jw",
+    "institution": "coqeifhm",
+    "balances": {
+      "traditional": [
+        {
+          "asset_code": "USD",
+          "amount": 3210,
+          "decimals": 2
+        }
+      ]
+    }
+  }
+}
+*/
+message GetOwnerBalancesResponse {
+  // The owner and its balances
+  OwnerBalances owner = 1;
+}
+
+/* [Example]
+{
+  "verifier": "z6MkguHbTD6UYKQxcuM5XdpPyWBW1ZStohFy17VYDvedu9jw",
+  "balances": [
+    {
+      "asset_code": "USD",
+      "amount": 3210,
+      "decimals": 2
+    }
+  ],
+  "type": "Traditional"
+}
+*/
+message AdjustOwnerBalancesRequest {
+  enum BalanceType {
+    Unspecified = 0;
+    Traditional = 1;
+    External    = 2;
+  }
+  // The verifier of the owner.
+  string verifier                 = 1;
+  // List of traditional asset balances to adjust for the given owner.
+  repeated common.Amount balances = 2;
+  // Type of asset balance
+  BalanceType type                = 3;
+}
+
+/* [Example]
+{}
+*/
+message AdjustOwnerBalancesResponse {}
+
+/* [Example]
+{
+  "institution": "coqeifhm",
+  "asset_code": "USD",
+  "page": 0,
+  "page_size": 10
+}
+*/
+message ListOwnerBalancesRequest {
+  // Filter to owners related to a particular institution.
+  optional string institution = 1;
+  // Filter owner balances to a particular asset code.
+  optional string asset_code  = 2;
+  // Page number for pagination. First page is '0'.
+  int32 page                  = 3;
+  // Elements per page for pagination.
+  int32 page_size             = 4;
+}
+
+/* [Example]
+{
+  "owners": [
+    {
+      "verifier": "z6Mkt5smUCU2LQudnx9Su2XF7yDm6zqzsSuMaGxAC2Vm1cAU",
+      "institution": "coqeifhm",
+      "balances": {
+        "traditional": [
+          {
+            "asset_code": "USD",
+            "amount": 3210,
+            "decimals": 2
+          }
+        ],
+        "tokens": [],
+        "tokens_minted": [],
+        "tokens_burned": []
+      }
+    }
+  ],
+  "total": 1
+}
+*/
+message ListOwnerBalancesResponse {
+  // Array of owner balances.
+  repeated OwnerBalances owners = 1;
+  // Total number of owners..
+  int32 total                   = 2;
+}
+
+/* [Example]
+{
+  "verifier": "z6Mkt5smUCU2LQudnx9Su2XF7yDm6zqzsSuMaGxAC2Vm1cAU"
+}
+*/
+message DeleteOwnerRequest {
+  // Verifier of the owner
+  string verifier = 1;
+}
+
+/* [Example]
+{}
+*/
+message DeleteOwnerResponse {}
+
+/* [Example]
+{
+  "id": "coqeifhm",
+  "authority_verifier": "z6MkguHbTD6UYKQxcuM5XdpPyWBW1ZStohFy17VYDvedu9jw",
+  "unified_ledger": true
+}
+*/
+message SetInstitutionRequest {
+  // The id of the institution.
+  string id                 = 1;
+  // The verifier of the associated governing authority.
+  string authority_verifier = 2;
+  // Indicates a ULI (unified ledger institution).
+  bool unified_ledger       = 3;
+}
+
+/* [Example]
+{}
+*/
+message SetInstitutionResponse {}
+
+/* [Example]
+{
+  "id": "coqeifhm"
+}
+*/
+message GetInstitutionRequest {
+  // The id of the institution.
+  string id = 1;
+}
+
+/* [Example]
+{
+  "id": "coqeifhm",
+  "authority_verifier": "z6MkguHbTD6UYKQxcuM5XdpPyWBW1ZStohFy17VYDvedu9jw",
+  "unified_ledger": false,
+  "created": "2000-01-01T00:00:00Z"
+}
+*/
+message GetInstitutionResponse {
+  // The id of the institution.
+  string id                 = 1;
+  // The verifier of the associated governing authority.
+  string authority_verifier = 2;
+  // Indicates a ULI (unified ledger institution).
+  bool unified_ledger       = 3;
+  // Creation timestamp in ISO-8601 format.
+  string created            = 4;
+}
+
+/* [Example]
+{
+  "page": 0,
+  "page_size": 10,
+}
+*/
+message ListInstitutionsRequest {
+  // Page number for pagination. First page is '0'.
+  int32 page      = 1;
+  // Elements per page for pagination.
+  int32 page_size = 2;
+}
+
+/* [Example]
+{
+  "institutions" [{
+    "id": "coqeifhm",
+    "authority_verifier": "z6MkguHbTD6UYKQxcuM5XdpPyWBW1ZStohFy17VYDvedu9jw",
+    "unified_ledger": false,
+    "created": "2000-01-01T00:00:00Z"
+  }]
+}
+*/
+message ListInstitutionsResponse {
+  message Institution {
+    // The id of the institution.
+    string id                 = 1;
+    // The verifier of the associated governing authority.
+    string authority_verifier = 2;
+    // Indicates a ULI (unified ledger institution).
+    bool unified_ledger       = 3;
+    // Creation timestamp in ISO-8601 format.
+    string created            = 4;
+  }
+
+  repeated Institution institutions = 1;
+}
+
+/* [Example]
+{
+  "id": "coqeifhm",
+}
+*/
+message RemoveInstitutionRequest {
+  // The id of the institution.
+  string id = 1;
+}
+
+/* [Example]
+{}
+*/
+message RemoveInstitutionResponse {}
+
+/* [Example]
+{
+  "verifier": "z6MkguHbTD6UYKQxcuM5XdpPyWBW1ZStohFy17VYDvedu9jw",
+  "amount": {
+    "asset_code": "USD",
+    "amount": 3210,
+    "decimals": 2
+  }
+}
+*/
+message AllocateExternalBalanceRequest {
+  // The verifier of the owner.
+  string verifier      = 1;
+  // Amount to move from the external balance to traditional.
+  common.Amount amount = 2;
+}
+
+/* [Example]
+{
+  "uetr": "61195f29-7c82-4999-8b08-a039339491ec"
+}
+*/
+message AllocateExternalBalanceResponse {
+  // The UETR of the initiated Issue transaction
+  string uetr = 1;
+}
+
+/* [Example]
+{
+  "institution": "coqeifhm",
+  "name": "coqeifhm inclusive example",
+  "root_participant": "z6MkguHbTD6UYKQxcuM5XdpPyWBW1ZStohFy17VYDvedu9jw",
+  "participants": [
+    "z6MksRMZGrr17Dt4ThAzhJDn713DKdRbePy9MBwAapAHtqBb"
+  ],
+  "inclusive": true
+}
+*/
+message AddReportTemplateRequest {
+  // The institution associated to the report.
+  string institution           = 1;
+  // The name of the report.
+  string name                  = 2;
+  // The primary participant included in all commitments as either sender or
+  // recipient.
+  string root_participant      = 3;
+  // The other participants included in the commitments if `inclusive` is true,
+  // else the participants that are not included in the commitments.
+  repeated string participants = 4;
+  // Indicates whether to look for commitments that include the `participants`
+  // or those that exclude them.
+  bool inclusive               = 5;
+}
+
+/* [Example]
+{
+  "id": "61195f29-7c82-4999-8b08-a039339491ec"
+}
+*/
+message AddReportTemplateResponse {
+  // The UUID of the added report template.
+  string id = 1;
+}
+
+/* [Example]
+{
+  "id": "61195f29-7c82-4999-8b08-a039339491ec",
+  "end_time": "2024-01-01T00:00:00Z"
+}
+*/
+message RunReportRequest {
+  // The ID of the report template to execute.
+  string id       = 1;
+  // The end time of the report period in ISO-8601 format.
+  string end_time = 2;
+}
+
+/* [Example]
+{
+  "id": "61195f29-7c82-4999-8b08-a039339491ec"
+}
+*/
+message RunReportResponse {
+  // The UUID of the report execution.
+  string id = 1;
+}
+
+/* [Example]
+{
+  "id": "61195f29-7c82-4999-8b08-a039339491ec",
+  "end_time": "2024-01-01T00:00:00Z"
+}
+*/
+message ApplyReportRequest {
+  // The UUID of the report execution to apply.
+  string id = 1;
+}
+
+/* [Example]
+{}
+*/
+message ApplyReportResponse {}
+
+/* [Example]
+{
+  "id": "61195f29-7c82-4999-8b08-a039339491ec"
+}
+*/
+message GetReportTemplateRequest {
+  // The UUID of the report template.
+  string id = 1;
+}
+
+/* [Example]
+{
+  "id": "61195f29-7c82-4999-8b08-a039339491ec",
+  "institution": "coqeifhm",
+  "name": "coqeifhm inclusive example",
+  "root_participant": "z6MkguHbTD6UYKQxcuM5XdpPyWBW1ZStohFy17VYDvedu9jw",
+  "participants": [
+    "z6MksRMZGrr17Dt4ThAzhJDn713DKdRbePy9MBwAapAHtqBb"
+  ],
+  "inclusive": true,
+  "last_applied": "2020-01-01T00:00:00Z"
+}
+*/
+message GetReportTemplateResponse {
+  // The UUID of the report template.
+  string id                    = 1;
+  // The institution associated to the report.
+  string institution           = 2;
+  // The name of the report.
+  string name                  = 3;
+  // The primary participant included in all commitments as either sender or
+  // recipient.
+  string root_participant      = 4;
+  // The other participants included in the commitments if `inclusive` is true,
+  // else the participants that are not included in the commitments.
+  repeated string participants = 5;
+  // Indicates whether to look for commitments that include the `participants`
+  // or those that exclude them.
+  bool inclusive               = 6;
+  // The ISO-8601 timestamp of when the report was last applied.
+  string last_applied          = 7;
+}
+
+/* [Example]
+{
+  "institution": "coqeifhm",
+  "page": 0,
+  "page_size": 10
+}
+*/
+message ListReportTemplatesRequest {
+  // The institution associated to the report.
+  string institution = 1;
+  // Page number for pagination. First page is '0'.
+  int32 page         = 2;
+  // Elements per page for pagination.
+  int32 page_size    = 3;
+}
+
+/* [Example]
+{
+  "id": "61195f29-7c82-4999-8b08-a039339491ec",
+  "institution": "coqeifhm",
+  "name": "coqeifhm inclusive example",
+  "root_participant": "z6MkguHbTD6UYKQxcuM5XdpPyWBW1ZStohFy17VYDvedu9jw",
+  "participants": [
+    "z6MksRMZGrr17Dt4ThAzhJDn713DKdRbePy9MBwAapAHtqBb"
+  ],
+  "inclusive": true,
+  "last_applied": "2020-01-01T00:00:00Z"
+}
+*/
+message ListReportTemplatesResponse {
+  message ReportTemplate {
+    // The UUID of the report template.
+    string id                    = 1;
+    // The institution associated to the report.
+    string institution           = 2;
+    // The name of the report.
+    string name                  = 3;
+    // The primary participant included in all commitments as either sender or
+    // recipient.
+    string root_participant      = 4;
+    // The other participants included in the commitments if `inclusive` is true,
+    // else the participants that are not included in the commitments.
+    repeated string participants = 5;
+    // Indicates whether to look for commitments that include the `participants`
+    // or those that exclude them.
+    bool inclusive               = 6;
+    // The ISO-8601 timestamp of when the report was last applied.
+    string last_applied          = 7;
+  }
+
+  repeated ReportTemplate templates = 1;
+  int32                   total     = 2;
+}
+
+enum ReportStatus {
+  UNSPECIFIED = 0;
+  UNAPPLIED   = 1;
+  APPLIED     = 2;
+  SUPERSEDED  = 3;
+}
+
+/* [Example]
+{
+  "id": "61195f29-7c82-4999-8b08-a039339491ec"
+}
+*/
+message GetReportRequest {
+  // The UUID of the report.
+  string id = 1;
+}
+
+/* [Example]
+{
+  "id": "61195f29-7c82-4999-8b08-a039339491ec",
+  "template_id": "40F1B708-D7AE-4FE7-87EC-823751A36C8b",
+  "start_time": "2020-01-02T00:00:00Z",
+  "end_time": "2020-01-01T00:00:00Z",
+  "status": "APPLIED",
+  "commitment_count": 100,
+  "entry_count": 10
+}
+*/
+message GetReportResponse {
+  // The UUID of the report.
+  string id              = 1;
+  // The ID of the report template.
+  string template_id     = 2;
+  // The ISO-8601 timestamp of the report start time.
+  string start_time      = 3;
+  // The ISO-8601 timestamp of the report end time.
+  string end_time        = 4;
+  // The status of the report
+  ReportStatus status    = 5;
+  // The count of commitments included in report.
+  int32 commitment_count = 6;
+  // The count of entries derived from compressing the commitments.
+  int32 entry_count      = 7;
+}
+
+/* [Example]
+{
+  "template_id": "61195f29-7c82-4999-8b08-a039339491ec",
+  "page": 0,
+  "page_size": 10
+}
+*/
+message ListReportsRequest {
+  // The UUID of the report template.
+  string template_id = 1;
+  // Page number for pagination. First page is '0'.
+  int32 page         = 2;
+  // Elements per page for pagination.
+  int32 page_size    = 3;
+}
+
+/* [Example]
+{
+  "reports": [
+    {
+      "id": "61195f29-7c82-4999-8b08-a039339491ec",
+      "template_id": "40F1B708-D7AE-4FE7-87EC-823751A36C8b",
+      "start_time": "2020-01-02T00:00:00Z",
+      "end_time": "2020-01-01T00:00:00Z",
+      "status": "APPLIED",
+      "commitment_count": 100,
+      "entry_count": 10
+    }
+  ]
+}
+*/
+message ListReportsResponse {
+  message Report {
+    // The UUID of the report.
+    string id              = 1;
+    // The ID of the report template.
+    string template_id     = 2;
+    // The ISO-8601 timestamp of the report start time.
+    string start_time      = 3;
+    // The ISO-8601 timestamp of the report end time.
+    string end_time        = 4;
+    // The status of the report
+    ReportStatus status    = 5;
+    // The count of commitments included in report.
+    int32 commitment_count = 6;
+    // The count of entries derived from compressing the commitments.
+    int32 entry_count      = 7;
+  }
+
+  // The list of reports.
+  repeated Report reports = 1;
+  int32           total   = 2;
+}
+
+/* [Example]
+{
+  "id": "61195f29-7c82-4999-8b08-a039339491ec",
+  "page": 0,
+  "page_size": 10
+}
+*/
+message ListReportEntriesRequest {
+  // The UUID of the report.
+  string id       = 1;
+  // Page number for pagination. First page is '0'.
+  int32 page      = 2;
+  // Elements per page for pagination.
+  int32 page_size = 3;
+}
+
+/* [Example]
+{
+  "entries": [
+    {
+      "sender": "z6MkguHbTD6UYKQxcuM5XdpPyWBW1ZStohFy17VYDvedu9jw",
+      "recipient": "z6MksRMZGrr17Dt4ThAzhJDn713DKdRbePy9MBwAapAHtqBb",
+      "amount": {
+        "asset_code": "USD",
+        "amount": 3210,
+        "decimals": 2
+      }
+    }
+  ]
+}
+*/
+message ListReportEntriesResponse {
+  message Entry {
+    // Verifier of the sender.
+    string sender        = 1;
+    // Verifier of the recipient.
+    string recipient     = 2;
+    // Amount to be settled.
+    common.Amount amount = 3;
+  }
+
+  // The list of entries.
+  repeated Entry entries = 1;
+  // The total count of all entries.
+  int32 total            = 2;
+}
+
+/* [Example]
+{
+  "id": "61195f29-7c82-4999-8b08-a039339491ec"
+}
+*/
+message DeleteReportTemplateRequest {
+  // The UUID of the report template.
+  string id = 1;
+}
+
+/* [Example]
+{}
+*/
+message DeleteReportTemplateResponse {}
+
+/* [Example]
+{
+  "id": "61195f29-7c82-4999-8b08-a039339491ec"
+}
+*/
+message DeleteReportRequest {
+  // The UUID of the report.
+  string id = 1;
+}
+
+/* [Example]
+{}
+*/
+message DeleteReportResponse {}
+
+// BankBalances Service.
+service BankBalances {
+  // Add a new owner to the database, succeeding even if the owner with the
+  // same verifier already exists.
+  rpc AddOwner(AddOwnerRequest) returns (AddOwnerResponse);
+  // Get an owner and its balances
+  rpc GetOwnerBalances(GetOwnerBalancesRequest) returns (GetOwnerBalancesResponse);
+  // Adjust the balances of an owner. If a balance for the asset type already
+  // exists it adjusts the balance by the provided amount, otherwise it sets
+  // the balance to the provided amount.
+  rpc AdjustOwnerBalances(AdjustOwnerBalancesRequest) returns (AdjustOwnerBalancesResponse);
+  // Delete an owner and all of its balances.
+  rpc DeleteOwner(DeleteOwnerRequest) returns (DeleteOwnerResponse);
+  // Get the list of owners and their balances for a given currency.
+  rpc ListOwnerBalances(ListOwnerBalancesRequest) returns (ListOwnerBalancesResponse);
+
+  // Adjust the external and traditional balances for a given owner, removing
+  // the given amount from the external balance and adding it to the
+  // traditional balance. Then, start an Issue transaction via the CW for the
+  // given owner to encumber the traditional balance.
+  rpc AllocateExternalBalance(AllocateExternalBalanceRequest) returns (AllocateExternalBalanceResponse);
+}
+
+// BankInstitutions Service.
+service BankInstitutions {
+  // Insert or update an institution, which sets an association to a given
+  // governing authority.
+  rpc SetInstitution(SetInstitutionRequest) returns (SetInstitutionResponse);
+  // Get an institution by id.
+  rpc GetInstitution(GetInstitutionRequest) returns (GetInstitutionResponse);
+  // Get an list of institutions.
+  rpc ListInstitutions(ListInstitutionsRequest) returns (ListInstitutionsResponse);
+  // Remove an institution by id.
+  rpc RemoveInstitution(RemoveInstitutionRequest) returns (RemoveInstitutionResponse);
+}
+
+// SettlementReports Service.
+service SettlementReports {
+  // Add a new report template.
+  rpc AddReportTemplate(AddReportTemplateRequest) returns (AddReportTemplateResponse);
+  // Run a report template.
+  rpc RunReport(RunReportRequest) returns (RunReportResponse);
+  // Apply the results of a report execution.
+  rpc ApplyReport(ApplyReportRequest) returns (ApplyReportResponse);
+
+  // Get a report template.
+  rpc GetReportTemplate(GetReportTemplateRequest) returns (GetReportTemplateResponse);
+  // Get a list of report templates.
+  rpc ListReportTemplates(ListReportTemplatesRequest) returns (ListReportTemplatesResponse);
+
+  // Get a report.
+  rpc GetReport(GetReportRequest) returns (GetReportResponse);
+  // Get a list of reports.
+  rpc ListReports(ListReportsRequest) returns (ListReportsResponse);
+  // Get a list of reports entries.
+  rpc ListReportEntries(ListReportEntriesRequest) returns (ListReportEntriesResponse);
+
+  // Delete a report template and all of its associated report executions.
+  rpc DeleteReportTemplate(DeleteReportTemplateRequest) returns (DeleteReportTemplateResponse);
+  // Delete a report execution.
+  rpc DeleteReport(DeleteReportRequest) returns (DeleteReportResponse);
+}
