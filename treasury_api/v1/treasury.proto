@@ -15,8 +15,8 @@ import "common/v1/common.proto";
 message GetSupplyRequest {
   // The currency code of the requested supply.
   string asset_code = 1;
-  // [MultibaseVerifier] Wallet verifier.
-  string verifier   = 4;
+  // [MultibaseVerifier] Treasury verifier.
+  string verifier   = 2;
 }
 
 // Lists the count of the files of specific denominations held in the Treasury service's vault, and the total value held
