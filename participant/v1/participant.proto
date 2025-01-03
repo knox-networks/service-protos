@@ -21,6 +21,8 @@ message CreateWalletRequest {
   string name                             = 1;
   // User-defined metadata
   optional google.protobuf.Value metadata = 2;
+  // Queryable ID used by external systems
+  optional string external_id             = 3;
 }
 
 /* [Example]
@@ -40,6 +42,8 @@ message WalletResponse {
   string public_key                       = 2;
   // User-defined metadata associated with the wallet.
   optional google.protobuf.Value metadata = 3;
+  // Queryable ID used by external systems
+  optional string external_id             = 4;
 }
 
 /* [Example]
@@ -50,9 +54,11 @@ message WalletResponse {
 */
 message ListWalletsRequest {
   // Page number for pagination.
-  int32 page      = 1;
+  int32 page                  = 1;
   // Size of the page for pagination.
-  int32 page_size = 2;
+  int32 page_size             = 2;
+  // Queryable ID used by external systems
+  optional string external_id = 3;
 }
 
 /* [Example]
