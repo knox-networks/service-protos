@@ -6,48 +6,6 @@ import "common/v1/common.proto";
 
 // THIS PROTO FILE IS INTENDED FOR USE FOR KNOX AND KNOX CUSTOMERS.
 
-// A digital banknote that is to be authorized. Several such requests may be sent in a stream.
-/* [Example]
-{
-  "promissory_file": "LengthOfFileBytesVaries="
-}
-*/
-message AuthorizeRequest {
-  // Digital banknote to authorize.
-  bytes promissory_file = 1;
-}
-
-// A digital banknote that has been authorized. Several such responses may be returned in a stream.
-/* [Example]
-{
-  "promissory_file": "LengthOfFileBytesVaries="
-}
-*/
-message AuthorizeResponse {
-  // Digital banknote with authorized signature.
-  bytes promissory_file = 1;
-}
-
-// Requests to get the Emissary for the Authority.
-/* [Example]
-{}
-*/
-message GetNetworkInfoRequest {}
-
-// Responds with verifiers of the Emissary and Transaction Manager
-/* [Example]
-{
-  "emissary": "EmissaryVerifierLengthVariesByAlgo",
-  "transaction_manager": "TransactionManagerVerifierLengthVariesByAlgo"
-}
-*/
-message GetNetworkInfoResponse {
-  // Verifier of the Emissary in multibase format.
-  string emissary            = 1;
-  // Verifier of the Transaction Manager in multibase format.
-  string transaction_manager = 2;
-}
-
 // Requests to get the Notary signature for a Notary public key
 /* [Example]
 {
@@ -70,128 +28,10 @@ message GetNotaryResponse {
   bytes signature = 1;
 }
 
-/* [Example]
-{}
-*/
-message ListGovernedAssetsRequest {}
-
-/* [Example]
-{
-  "asset_data": [
-    {
-      "key": "USD",
-      "value": {
-        "denominations": [1, 5, 10, 25, 100, 200, 500, 1000, 2000, 5000, 10000, 50000],
-        "precision": 2
-      }
-    },
-    {
-      "key": "JPY",
-      "value": {
-        "denominations": [1, 5, 10, 50, 100, 500, 1000, 2000, 5000, 10000, 50000, 100000],
-        "precision": 0
-      }
-    }
-  ]
-}
-*/
-message ListGovernedAssetsResponse {
-  // List of currently Governed Assets.
-  map<string, common.AssetDenomination> asset_data = 1;
-}
-
-/* [Example]
-{
-  "asset_data": [
-    {
-      "key": "USD",
-      "value": {
-        "denominations": [1, 5, 10, 25, 100, 200, 500, 1000, 2000, 5000, 10000, 50000],
-        "precision": 2
-      }
-    },
-    {
-      "key": "JPY",
-      "value": {
-        "denominations": [1, 5, 10, 50, 100, 500, 1000, 2000, 5000, 10000, 50000, 100000],
-        "precision": 0
-      }
-    }
-  ]
-}
-*/
-message SetGovernedAssetsRequest {
-  // List of requested Governed Assets.
-  map<string, common.AssetDenomination> asset_data = 1;
-}
-
-/* [Example]
-{}
-*/
-message SetGovernedAssetsResponse {}
-
-/* [Example]
-{
-  "asset_code": "USD",
-  "asset_denomination": {
-    "denominations": [
-      1,
-      5,
-      10,
-      25,
-      100,
-      200,
-      500,
-      1000,
-      2000,
-      5000,
-      10000,
-      50000
-    ],
-    "precision": 2
-  }
-}
-*/
-message AddAssetRequest {
-  // Currency Code
-  string asset_code                           = 1;
-  // Asset Denomination
-  common.AssetDenomination asset_denomination = 2;
-}
-
-/* [Example]
-{}
-*/
-message AddAssetResponse {}
-
-/* [Example]
-{
-  "asset_code": "USD"
-}
-*/
-message RemoveAssetRequest {
-  // Currency Code
-  string asset_code = 1;
-}
-/* [Example]
-{}
-*/
-message RemoveAssetResponse {}
-
 // Entity that is the approving monetary authority- Ex Central bank or commercial bank. It can create Issuers with
 // limits, approve additional issuance limits, authorize issuing of digital banknotes, and replace digital banknotes in
 // circulation.
 service Authority {
-  // Gets the verifier of the Emissary for this Authority.
-  rpc GetNetworkInfo(GetNetworkInfoRequest) returns (GetNetworkInfoResponse);
   // Gets the signature of the Notary for this Authority/Notary.
   rpc GetNotary(GetNotaryRequest) returns (GetNotaryResponse);
-  // List the Governed Assets for this Authority.
-  rpc ListGovernedAssets(ListGovernedAssetsRequest) returns (ListGovernedAssetsResponse);
-  // Set the Governed Assets for this Authority. This method is destructive
-  rpc SetGovernedAssets(SetGovernedAssetsRequest) returns (SetGovernedAssetsResponse);
-  // Insert a new Governed Asset type to the Authority.
-  rpc AddAsset(AddAssetRequest) returns (AddAssetResponse);
-  // Remove a Governed Asset Type from the Authority.
-  rpc RemoveAsset(RemoveAssetRequest) returns (RemoveAssetResponse);
 }
