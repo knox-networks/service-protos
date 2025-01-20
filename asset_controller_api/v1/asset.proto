@@ -117,11 +117,10 @@ message ListAssetsResponse {
     "amount": 100,
     "decimals": 2,
     "authority": "zAuthorityPublicKeyMultibase58Encoded",
-    "issuer": "zIssuerPublicKeyMultibase58Encoded",
-    "issuance_date": "2006-01-02T15:04:05Z",
-    "block_depth": 3,
-    "authorization_signature": "ByteLengthAuthSignatureVariesByAlgo=",
-    "transfer_signature": "ByteLengthTransferSignatureVariesByAlgo=",
+    "owner": "zIssuerPublicKeyMultibase58Encoded",
+    "created": "2006-01-02T15:04:05Z",
+    "genesis_signature": "ByteLengthAuthSignatureVariesByAlgo=",
+    "notary_signature": "ByteLengthTransferSignatureVariesByAlgo=",
     "notaries": [
       {
         "did": "did:method-name:zDIDMultibase58Encoded",
@@ -136,29 +135,27 @@ message ListAssetsResponse {
   */
   message Asset {
     // Version of the digital banknote file.
-    string version                = 1;
+    string version           = 1;
     // UUID of the digital banknote file.
-    string id                     = 2;
+    string id                = 2;
     // ISO-4217 currency code.
-    string currency               = 3;
+    string currency          = 3;
     // Amount of the digital banknote.
-    int64 amount                  = 4;
+    uint64 amount            = 4;
     // Decimal precision.
-    uint32 decimals               = 5;
+    uint32 decimals          = 5;
     // Public key of the monetary Authority.
-    string authority              = 6;
-    // Public key of the Issuer.
-    string issuer                 = 7;
-    // RFC3339 timestamp of the issuance date.
-    string issuance_date          = 8;
-    // Number of signature blocks, representing the owner history.
-    uint32 block_depth            = 9;
-    // Signature of the latest block hash from the Authority.
-    bytes authorization_signature = 10;
+    string authority         = 6;
+    // Public key of the Owner.
+    string owner             = 7;
+    // RFC3339 timestamp when the asset was created.
+    string created           = 8;
+    // Signature of the latest block hash from the Notary.
+    bytes genesis_signature  = 9;
     // Signature of the previous owner.
-    bytes transfer_signature      = 11;
+    bytes notary_signature   = 10;
     // List of Notaries.
-    repeated Notary notaries      = 12;
+    repeated Notary notaries = 11;
   }
 
   // List of Assets.
@@ -418,11 +415,10 @@ message GetAssetResponse {
     "amount": 100,
     "decimals": 2,
     "authority": "zAuthorityPublicKeyMultibase58Encoded",
-    "issuer": "zIssuerPublicKeyMultibase58Encoded",
-    "issuance_date": "2006-01-02T15:04:05Z",
-    "block_depth": 3,
-    "authorization_signature": "ByteLengthAuthSignatureVariesByAlgo=",
-    "transfer_signature": "ByteLengthTransferSignatureVariesByAlgo=",
+    "owner": "zIssuerPublicKeyMultibase58Encoded",
+    "created": "2006-01-02T15:04:05Z",
+    "genesis_signature": "ByteLengthAuthSignatureVariesByAlgo=",
+    "notary_signature": "ByteLengthTransferSignatureVariesByAlgo=",
     "notaries": [
       {
         "did": "did:method-name:zDIDMultibase58Encoded",
@@ -437,29 +433,27 @@ message GetAssetResponse {
   */
   message Asset {
     // Version of the digital banknote file.
-    string version                = 1;
+    string version           = 1;
     // UUID of the digital banknote file.
-    string id                     = 2;
+    string id                = 2;
     // ISO-4217 currency code.
-    string currency               = 3;
+    string currency          = 3;
     // Amount of the digital banknote.
-    int64 amount                  = 4;
+    uint64 amount            = 4;
     // Decimal precision.
-    uint32 decimals               = 5;
+    uint32 decimals          = 5;
     // Public key of the monetary Authority.
-    string authority              = 6;
-    // Public key of the Issuer.
-    string issuer                 = 7;
-    // RFC3339 timestamp of the issuance date.
-    string issuance_date          = 8;
-    // Number of signature blocks, representing the owner history.
-    uint32 block_depth            = 9;
+    string authority         = 6;
+    // Public key of the Owner.
+    string owner             = 7;
+    // RFC3339 timestamp when the asset was created.
+    string created           = 8;
     // Signature of the latest block hash from the Notary.
-    bytes authorization_signature = 10;
+    bytes genesis_signature  = 9;
     // Signature of the previous owner.
-    bytes transfer_signature      = 11;
+    bytes notary_signature   = 10;
     // List of Notaries.
-    repeated Notary notaries      = 12;
+    repeated Notary notaries = 11;
   }
 
   // Asset object
