@@ -9,8 +9,7 @@ import "common/v1/packet.proto";
 {
   "amount": {
     "asset_code": "USD",
-    "amount": 5700,
-    "decimals":2
+    "value": "57.00"
   },
   "file_count": 57
 }
@@ -20,6 +19,65 @@ message WalletBalance {
   common.Amount amount = 1;
   // Number of Files in Wallet
   int64 file_count     = 2;
+}
+
+/* [Example]
+{
+  "did": "DID_NOTARY",
+  "signature": "ByteLengthAuthSignatureVariesByAlgo="
+}
+*/
+message Notary {
+  // DID of Notary
+  string did      = 1;
+  // Signature of Notary
+  bytes signature = 2;
+}
+
+/* [Example]
+{
+  "version": "0.1.0",
+  "id": "ASSET_ID",
+  "currency": "USD",
+  "value": "10.00",
+  "authority": "zAuthorityPublicKeyMultibase58Encoded",
+  "owner": "zIssuerPublicKeyMultibase58Encoded",
+  "created": "2006-01-02T15:04:05Z",
+  "genesis_signature": "ByteLengthAuthSignatureVariesByAlgo=",
+  "notary_signature": "ByteLengthTransferSignatureVariesByAlgo=",
+  "notaries": [
+    {
+      "did": "did:method-name:zDIDMultibase58Encoded",
+      "signature": "ByteLengthSignatureVariesByAlgo="
+    },
+    {
+      "did": "did:method-name:zDIDMultibase58Encoded",
+      "signature": "ByteLengthSignatureVariesByAlgo="
+    }
+  ]
+}
+*/
+message Asset {
+  // Version of the digital banknote file.
+  string version           = 1;
+  // UUID of the digital banknote file.
+  string id                = 2;
+  // ISO-4217 currency code.
+  string currency          = 3;
+  // Value of the asset represented as a decimal string.
+  string value             = 4;
+  // Public key of the monetary Authority.
+  string authority         = 5;
+  // Public key of the Owner.
+  string owner             = 6;
+  // RFC3339 timestamp when the asset was created.
+  string created           = 7;
+  // Signature of the latest block hash from the Notary.
+  bytes genesis_signature  = 8;
+  // Signature of the previous owner.
+  bytes notary_signature   = 9;
+  // List of Notaries.
+  repeated Notary notaries = 10;
 }
 
 /* [Example]
@@ -48,8 +106,7 @@ message ListAssetsRequest {
       "version": "0.1.0",
       "id": "ASSET_ID",
       "currency": "USD",
-      "amount": 100,
-      "decimals": 2,
+      "value": "10.00",
       "authority": "zAuthorityPublicKeyMultibase58Encoded",
       "issuer": "zIssuerPublicKeyMultibase58Encoded",
       "issuance_date": "2006-01-02T15:04:05Z",
@@ -71,8 +128,7 @@ message ListAssetsRequest {
       "version": "0.1.0",
       "id": "ASSET_ID",
       "currency": "USD",
-      "amount": 500,
-      "decimals": 2,
+      "value": "5.00",
       "authority": "zAuthorityPublicKeyMultibase58Encoded",
       "issuer": "zIssuerPublicKeyMultibase58Encoded",
       "issuance_date": "2006-01-02T15:04:05Z",
@@ -95,69 +151,6 @@ message ListAssetsRequest {
 }
 */
 message ListAssetsResponse {
-
-  /* [Example]
-  {
-    "did": "DID_NOTARY",
-    "signature": "ByteLengthAuthSignatureVariesByAlgo="
-  }
-  */
-  message Notary {
-    // DID of Notary
-    string did      = 1;
-    // Signature of Notary
-    bytes signature = 2;
-  }
-
-  /* [Example]
-  {
-    "version": "0.1.0",
-    "id": "ASSET_ID",
-    "currency": "USD",
-    "amount": 100,
-    "decimals": 2,
-    "authority": "zAuthorityPublicKeyMultibase58Encoded",
-    "owner": "zIssuerPublicKeyMultibase58Encoded",
-    "created": "2006-01-02T15:04:05Z",
-    "genesis_signature": "ByteLengthAuthSignatureVariesByAlgo=",
-    "notary_signature": "ByteLengthTransferSignatureVariesByAlgo=",
-    "notaries": [
-      {
-        "did": "did:method-name:zDIDMultibase58Encoded",
-        "signature": "ByteLengthSignatureVariesByAlgo="
-      },
-      {
-        "did": "did:method-name:zDIDMultibase58Encoded",
-        "signature": "ByteLengthSignatureVariesByAlgo="
-      }
-    ]
-  }
-  */
-  message Asset {
-    // Version of the digital banknote file.
-    string version           = 1;
-    // UUID of the digital banknote file.
-    string id                = 2;
-    // ISO-4217 currency code.
-    string currency          = 3;
-    // Amount of the digital banknote.
-    uint64 amount            = 4;
-    // Decimal precision.
-    uint32 decimals          = 5;
-    // Public key of the monetary Authority.
-    string authority         = 6;
-    // Public key of the Owner.
-    string owner             = 7;
-    // RFC3339 timestamp when the asset was created.
-    string created           = 8;
-    // Signature of the latest block hash from the Notary.
-    bytes genesis_signature  = 9;
-    // Signature of the previous owner.
-    bytes notary_signature   = 10;
-    // List of Notaries.
-    repeated Notary notaries = 11;
-  }
-
   // List of Assets.
   repeated Asset assets = 1;
 
@@ -181,16 +174,14 @@ message ListBalancesRequest {
     {
       "amount": {
         "asset_code": "USD",
-        "amount": 5700,
-        "decimals":2
+        "value": "57.00"
       },
       "file_count": 57
     },
     {
       "amount": {
         "asset_code": "EUR",
-        "amount": 5700,
-        "decimals":2
+        "value": "57.00"
       },
       "file_count": 57
     }
@@ -220,8 +211,7 @@ message ListBalanceDetailsRequest {
       "balance": {
         "amount": {
           "asset_code": "USD",
-          "amount": 5700,
-          "decimals":2
+          "value": "57.00"
         },
         "file_count": 57
       },
@@ -231,8 +221,7 @@ message ListBalanceDetailsRequest {
       "balance": {
         "amount": {
           "asset_code": "EUR",
-          "amount": 5700,
-          "decimals":2
+          "value": "57.00"
         },
         "file_count": 57
       },
@@ -247,8 +236,7 @@ message ListBalanceDetailsResponse {
     "balance": {
       "amount": {
         "asset_code": "USD",
-        "amount": 5700,
-        "decimals":2
+        "value": "57.00"
       },
       "file_count": 57
     },
@@ -371,8 +359,7 @@ message GetAssetRequest {
     "version": "0.1.0",
     "id": "ASSET_ID",
     "currency": "USD",
-    "amount": 100,
-    "decimals": 2,
+    "value": "1.00",
     "authority": "zAuthorityPublicKeyMultibase58Encoded",
     "issuer": "zIssuerPublicKeyMultibase58Encoded",
     "issuance_date": "2006-01-02T15:04:05Z",
@@ -393,69 +380,6 @@ message GetAssetRequest {
 }
 */
 message GetAssetResponse {
-
-  /* [Example]
-  {
-    "did": "DID_NOTARY",
-    "signature": "ByteLengthAuthSignatureVariesByAlgo="
-  }
-  */
-  message Notary {
-    // DID of Notary
-    string did      = 1;
-    // Signature of Notary
-    bytes signature = 2;
-  }
-
-  /* [Example]
-  {
-    "version": "0.1.0",
-    "id": "ASSET_ID",
-    "currency": "USD",
-    "amount": 100,
-    "decimals": 2,
-    "authority": "zAuthorityPublicKeyMultibase58Encoded",
-    "owner": "zIssuerPublicKeyMultibase58Encoded",
-    "created": "2006-01-02T15:04:05Z",
-    "genesis_signature": "ByteLengthAuthSignatureVariesByAlgo=",
-    "notary_signature": "ByteLengthTransferSignatureVariesByAlgo=",
-    "notaries": [
-      {
-        "did": "did:method-name:zDIDMultibase58Encoded",
-        "signature": "ByteLengthSignatureVariesByAlgo="
-      },
-      {
-        "did": "did:method-name:zDIDMultibase58Encoded",
-        "signature": "ByteLengthSignatureVariesByAlgo="
-      }
-    ]
-  }
-  */
-  message Asset {
-    // Version of the digital banknote file.
-    string version           = 1;
-    // UUID of the digital banknote file.
-    string id                = 2;
-    // ISO-4217 currency code.
-    string currency          = 3;
-    // Amount of the digital banknote.
-    uint64 amount            = 4;
-    // Decimal precision.
-    uint32 decimals          = 5;
-    // Public key of the monetary Authority.
-    string authority         = 6;
-    // Public key of the Owner.
-    string owner             = 7;
-    // RFC3339 timestamp when the asset was created.
-    string created           = 8;
-    // Signature of the latest block hash from the Notary.
-    bytes genesis_signature  = 9;
-    // Signature of the previous owner.
-    bytes notary_signature   = 10;
-    // List of Notaries.
-    repeated Notary notaries = 11;
-  }
-
   // Asset object
   Asset asset = 1;
 }
@@ -482,8 +406,7 @@ message GetContractDetailRequest {
       "recipient": "zRecipient1PublicKey",
       "amount": {
         "asset_code":"USD",
-        "amount":100,
-        "decimals":2
+        "value": "1.00"
       }
     },
     {
@@ -491,8 +414,7 @@ message GetContractDetailRequest {
       "recipient": "zRecipient1PublicKey",
       "amount": {
         "asset_code":"MXN",
-        "amount":100,
-        "decimals":2
+        "value": "1.00"
       }
     }
   ],
@@ -507,8 +429,7 @@ message GetContractDetailRequest {
       "receiver": "zRecipient1PublicKey",
       "amount": {
           "asset_code":"USD",
-          "amount":100,
-          "decimals":2
+          "value": "1.00"
       },
       "timestamp": "2006-01-02T15:04:05Z",
       "kind": "ContractPayment",
@@ -526,8 +447,7 @@ message GetContractDetailResponse {
     "receiver": "zRecipient1PublicKey",
     "amount": {
         "asset_code":"USD",
-        "amount":100,
-        "decimals":2
+        "value": "1.00"
     },
     "timestamp": "2006-01-02T15:04:05Z",
     "kind": "ContractPayment",

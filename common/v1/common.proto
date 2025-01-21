@@ -66,25 +66,18 @@ message DynamicVerifier {
   bytes verifier                   = 2;
 }
 
-// IEEE 754 decimal128 compatible amount type constructed from `amount` (the significand/mantissa) and `decimals` (the
-// inverse exponent) for use with floating point arithmetic and decimal 128 compatible libraries. Ex. An `amount` of
-// 12345 and `decimals` of 2 is equivalent to "123.45".
+// An asset code combined with a value representing an amount of the given asset.
 /* [Example]
 {
   "asset_code":"USD",
-  "amount":100,
-  "decimals":2
+  "value": "10.00",
 }
 */
 message Amount {
   // ISO-4217 currency code to denote remitting Digital Banknotes in a specific currency.
   string asset_code = 1;
-  // Signed 64 bit representation of the significand.
-  int64 amount      = 2;
-  // Unsigned 32 bit representation of the decimal precision, i.e. the inverse of the exponent. The allowed value is
-  // determined by the rust_decimal crate, which allows a scale (decimal) between 0-28 inclusive. e.g. amount = 10,
-  // decimals = 2 => value 0.01.
-  uint32 decimals   = 3;
+  // Numerical value of this amount represented as a decimal string.
+  string value      = 2;
 }
 
 // Represents a desired denomination distribution.
