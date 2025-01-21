@@ -46,6 +46,8 @@ enum PacketType {
   AssociatedConnectionDropped  = 12;
   // Used to indicate an AssociatedConnectionAdded with a nested packet sent to the client
   AssociatedConnectionWithData = 13;
+  // Used for internal testing
+  Test                         = 14;
 
   // ---------------------------
   // General Packets 50..99
@@ -121,7 +123,7 @@ enum PacketType {
   TxnRecoveryResponse          = 600;
 
   // Message sent by the participant of a transaction to the Transaction Manager. The
-  // Transaction Manager responds with the `RecoveryData` packet so the participant can
+  // Transaction Manager responds with the TxnRecoveryResponse packet so the participant can
   // recover the transaction.
   TxnRecoveryRequest           = 601;
 
@@ -198,6 +200,9 @@ enum PacketType {
 
   // Specifies promissores to lock in for a group
   TxnLockGroupPromissories     = 1321;
+
+  // Sent by the Transaction Manager to the participant in response to TxnLockGroupPromissories
+  TxnLockGroupPromissoriesAck  = 1322;
 }
 
 // Streaming data packet used across Gateway connections.
@@ -301,6 +306,26 @@ message BatchedPromissory {
   repeated bytes promissory_batch = 1;
 }
 
+// Transfers an amount. Upon lock, results in the unspent portion returned.
+// If the commitment is successful, `transferred` is applied. If the commitment
+// is reverted, then `refund` is applied.
+// Each item is a flatbuffer-serialized bytes of a Promissory.
+/* [Example]
+{
+  "transferred": "LengthOfFileBytesVaries=",
+  "unspent": "LengthOfFileBytesVaries=",
+  "refund": "LengthOfFileBytesVaries="
+}
+*/
+message ReimbursablePromissory {
+  // A single transferred promissory file. owner -> recipient
+  bytes transferred      = 1;
+  // Unspent potion to be returned immediately upon successful lock. owner -> owner
+  optional bytes unspent = 2;
+  // A refund of `transferred` in the event this promissory needs to be returned. owner -> owner
+  optional bytes refund  = 3;
+}
+
 /* [Example]
 {
   "commitment": "UETR#GROUP/COMMITMENT",
@@ -314,7 +339,13 @@ message BatchedPromissory {
 message LockBatchedPromissory {
   // List of transferred promissory bytes. These are expected to be the
   // flatbuffer-serialized bytes of a Promissory, not protobuf.
-  map<string, BatchedPromissory> promissories = 1;
+  map<string, ReimbursablePromissory> promissories = 1;
+}
+
+// Sent by the TM in response to a participant locking in their promissories
+message UnspentPromissories {
+  // Key is the commitment IRI, value is the flatbuffer-serialized bytes of a Promissory
+  map<string, bytes> promissories = 1;
 }
 
 /* [Example]
@@ -336,14 +367,19 @@ message LockBatchedPromissory {
 */
 message TxnOutcome {
   // Finalized promissories for each Commitment. The key is the commitment IRI
-  // while the value is a list of promissories.
-  map<string, BatchedPromissory> finalized = 1;
-
-  // Discarded commitment IRIs
-  repeated string discarded                = 2;
+  // while the value is a flatbuffer-serialized bytes of a Promissory.
+  map<string, bytes> finalized = 1;
 
   // Indicates whether to wait for another request from the TM for this transaction
-  bool linger                              = 3;
+  bool linger                  = 2;
+}
+
+enum TxnRecoveryAction {
+  TransactionNotFound = 0;
+  SendContract = 1;
+  AwaitGroupRequest = 2;
+  AwaitForTransactionToComplete = 3;
+  RetrieveAssets = 4;
 }
 
 /* [Example]
