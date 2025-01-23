@@ -1,3 +1,15 @@
+//
+// ©  2025 Knox Networks, Inc. All rights reserved.
+//
+// This software is the confidential and proprietary information of Knox Networks, Inc. You  shall
+// not disclose such confidential Information and shall use it only in accordance with the terms of
+// the license agreement you entered into with Knox Networks, Inc. This software may include third-
+// party components, which are subject to their own license terms. By using this software, you
+// agree to comply with those terms.
+//
+// Unauthorized copying of this file, via any medium is strictly prohibited.
+//
+
 syntax = "proto3";
 
 package encumbrance_api.v1;
