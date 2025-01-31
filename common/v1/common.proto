@@ -507,6 +507,8 @@ message AssetAuthority {
   string verifier = 1;
   // URL of the Asset Authority.
   string url      = 2;
+  // Maximum number of digits right of the decimal (Max supported value is 30)
+  uint32 decimals  = 3;
 }
 
 /* [Example]
