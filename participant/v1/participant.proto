@@ -4,6 +4,7 @@ package participant.v1;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
+import "common/v1/common.proto";
 
 // THIS PROTO FILE IS INTENDED FOR USE FOR KNOX AND KNOX CUSTOMERS.
 
@@ -93,6 +94,114 @@ message WalletRequest {
   string public_key = 1;
 }
 
+// Requests to get the Notary signature for a Notary public key
+/* [Example]
+{
+  "verifier": "NotaryVerifierLengthVariesByAlgo"
+}
+*/
+message GetNotaryRequest {
+  // Public key of the Notary.
+  string notary_verifier = 1;
+  // Public key of the authority that will sign the notary verifier
+  string authority_verifier = 2;
+}
+
+// Responds with the signature of the requested Notary
+/* [Example]
+{
+  "signature": "ByteLengthSignatureVariesByAlgo="
+}
+*/
+message GetNotaryResponse {
+  // The signature of the Notary created by signing the Notary Public key with the Authority keypair
+  bytes signature = 1;
+}
+
+// Requests the count of files of various denominations for a given currency.
+/* [Example]
+{
+  "asset_code": "USD"
+}
+*/
+message GetSupplyRequest {
+  // The currency code of the requested supply.
+  string asset_code = 1;
+  // [MultibaseVerifier] Treasury verifier.
+  string verifier   = 2;
+}
+
+// Lists the count of the files of specific denominations held in the Treasury service's vault, and the total value held
+// in files of that denomination.
+/* [Example]
+{
+  "denomination": {
+    "asset_code":"USD",
+    "amount":2000,
+    "decimals":2
+  },
+  "count": 5,
+  "total": {
+    "asset_code":"USD",
+    "amount":10000,
+    "decimals":2
+  }
+}
+*/
+message DenominationCount {
+  // The amount of the denomination.
+  common.Amount denomination = 1;
+  // The number of digital banknotes of this amount held in supply.
+  uint32 count               = 2;
+  // The total value represented by digital banknotes of this denomination.
+  common.Amount total        = 3;
+}
+
+// Provides a list of file denominations in the Treasury service's Vault.
+/* [Example]
+{
+  "supply": [
+    {
+      "denomination": {
+        "asset_code": "USD",
+        "amount": 2000,
+        "decimals": 2
+      },
+      "count": 5,
+      "total": {
+        "asset_code": "USD",
+        "amount": 10000,
+        "decimals": 2
+      }
+    },
+    {
+      "denomination": {
+        "asset_code": "USD",
+        "amount": 1000,
+        "decimals": 2
+      },
+      "count": 5,
+      "total": {
+        "asset_code": "USD",
+        "amount": 5000,
+        "decimals": 2
+      }
+    }
+  ],
+  "total": {
+    "asset_code": "USD",
+    "amount": 15000,
+    "decimals": 2
+  }
+}
+*/
+message GetSupplyResponse {
+  // A list of denomination counts of the digital banknotes held in supply.
+  repeated DenominationCount supply = 1;
+  // grand total sum of all promissories
+  common.Amount total               = 2;
+}
+
 // Transacts and holds digital banknotes. This is a server side wallet solution in lieu of a mobile wallet,
 // hosted by the bank on behalf of the customer who opts in to do so. Can also be used by institutions,
 // e.g. a financial institution vault.
@@ -105,4 +214,14 @@ service Participant {
   rpc ListWallets(ListWalletsRequest) returns (ListWalletsResponse);
   // Deletes the wallet with the verifier. Must have zero balance.
   rpc DeleteWallet(WalletRequest) returns (google.protobuf.Empty);
+
+  // Gets the verifier of the authority wallet.
+  rpc GetAuthorityVerifier(common.GetVerifierRequest) returns (common.GetVerifierResponse);
+    // Gets the verifier of the treasury wallet.
+  rpc GetTreasuryVerifier(common.GetVerifierRequest) returns (common.GetVerifierResponse);
+  // Gets the signature of the Notary for this Authority/Notary.
+  rpc GetNotary(GetNotaryRequest) returns (GetNotaryResponse);
+
+  // Get a list of denomination counts of the digital banknotes held in the Treasury service's vault.
+  rpc GetSupply(GetSupplyRequest) returns (GetSupplyResponse);
 }
