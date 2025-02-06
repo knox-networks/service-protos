@@ -26,38 +26,6 @@ import "common/v1/packet.proto";
   ]
 }
 */
-message SetAssetAuthoritiesRequest {
-  // List of Authorities and Assets to Set.
-  map<string, common.AssetAuthority> authorities = 1;
-}
-
-/* [Example]
-{}
-*/
-message SetAssetAuthoritiesResponse {
-  // Empty body
-}
-
-/* [Example]
-{
-  "authorities": [
-    {
-      "key": "AuthorityKey",
-      "value": {
-        "verifier": "VerifierLengthVariesByAlgo",
-        "url": "AUTHORITY_URL"
-      }
-    },
-    {
-      "key": "AuthorityKey2",
-      "value": {
-        "verifier": "VerifierLengthVariesByAlgo",
-        "url": "AUTHORITY2_URL"
-      }
-    }
-  ]
-}
-*/
 message AddAssetAuthoritiesRequest {
   // List of Authorities and Assets to Add.
   map<string, common.AssetAuthority> authorities = 1;
@@ -90,6 +58,21 @@ message AddAssetAuthorityRequest {
 {}
 */
 message AddAssetAuthorityResponse {}
+
+/* [Example]
+{
+  "asset_code": "USD",
+}
+*/
+message RemoveAssetAuthorityRequest {
+  // Currency Code
+  string asset_code  = 1;
+}
+
+/* [Example]
+{}
+*/
+message RemoveAssetAuthorityResponse {}
 
 /* [Example]
 {
@@ -167,12 +150,12 @@ message ListFulfilledCommitmentsResponse {
 
 // Transaction Manager Service.
 service TransactionManager {
-  // Set the Authorities for Assets.
-  rpc SetAssetAuthorities(SetAssetAuthoritiesRequest) returns (SetAssetAuthoritiesResponse);
   // Append a list of authorities for given currency codes
   rpc AddAssetAuthorities(AddAssetAuthoritiesRequest) returns (AddAssetAuthoritiesResponse);
   // Append an authority for a given currency code
   rpc AddAssetAuthority(AddAssetAuthorityRequest) returns (AddAssetAuthorityResponse);
+  // Remove a single asset for an authority
+  rpc RemoveAssetAuthority(RemoveAssetAuthorityRequest) returns (RemoveAssetAuthorityResponse);
   // Remove all assets for an authority
   rpc RemoveAuthority(RemoveAuthorityRequest) returns (RemoveAuthorityResponse);
   // Returns current issuer asset authorities
