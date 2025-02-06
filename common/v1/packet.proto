@@ -123,7 +123,7 @@ enum PacketType {
   TxnRecoveryResponse          = 600;
 
   // Message sent by the participant of a transaction to the Transaction Manager. The
-  // Transaction Manager responds with the `RecoveryData` packet so the participant can
+  // Transaction Manager responds with the TxnRecoveryResponse packet so the participant can
   // recover the transaction.
   TxnRecoveryRequest           = 601;
 
@@ -203,6 +203,14 @@ enum PacketType {
 
   // Sent by the Transaction Manager to the participant in response to TxnLockGroupPromissories
   TxnLockGroupPromissoriesAck  = 1322;
+
+  TxnSignContract = 1323;
+
+  TxnSignContractAck = 1324;
+
+  TxnSignContractNack = 1325;
+
+  TxnFinalContract = 1326;
 }
 
 // Streaming data packet used across Gateway connections.
