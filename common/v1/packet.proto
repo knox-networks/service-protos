@@ -358,22 +358,23 @@ message ChangePromissories {
 
 /* [Example]
 {
+  "fulfilled": [
+    "UETR#GROUP/COMMITMENT",
+    "UETR#GROUP/COMMITMENT"
+  ],
   "finalized": {
     "UETR#GROUP/COMMITMENT": "promissory_batch": [
       "LengthOfFileBytesVaries=",
       "LengthOfFileBytesVaries=",
       "LengthOfFileBytesVaries="
     ],
-    "discarded": [
-      "UETR#GROUP/COMMITMENT",
-      "UETR#GROUP/COMMITMENT",
-      "UETR#GROUP/COMMITMENT"
-    ],
-    "linger": false
-  }
+  },
+  "linger": false
 }
 */
 message TxnOutcome {
+  // List of Commitment IRIs of all commitments that were fulfilled.
+  repeated string fulfilled    = 3;
   // Finalized promissories for each Commitment. The key is the commitment IRI
   // while the value is a flatbuffer-serialized bytes of a Promissory.
   map<string, bytes> finalized = 1;
