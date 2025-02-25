@@ -78,6 +78,8 @@ message Asset {
   bytes notary_signature   = 9;
   // List of Notaries.
   repeated Notary notaries = 10;
+  // Genesis hash of all fields in Promissory
+  string genesis_hash      = 11;
 }
 
 /* [Example]
