@@ -144,8 +144,38 @@ message ListFulfilledCommitmentsRequest {
   int32 page_size              = 5;
 }
 
+// Represents a fulfilled commitment.
+/* [Example]
+{
+  "uetr": "UETR",
+  "sender": "zSenderPublicKey",
+  "recipient": "zRecipientPublicKey",
+  "amount": {
+    "asset_code":"USD",
+    "amount":100,
+    "decimals":2
+  },
+  "kind": "Transfer",
+  "fulfilled": "2020-01-01T00:00:00Z"
+}
+*/
+message FulfilledCommitment {
+  // UETR of parent transaction
+  string uetr                = 1;
+  // Sender Public Key
+  string sender              = 2;
+  // Recipient Public Key
+  string recipient           = 3;
+  // Amount of Commitment
+  common.Amount amount       = 4;
+  // Kind of Commitment
+  common.CommitmentKind kind = 5;
+  // Timestamp when commitment was fulfilled, in RFC 3339 format.
+  string fulfilled    = 6;
+}
+
 message ListFulfilledCommitmentsResponse {
-  repeated common.Commitment commitments = 1;
+  repeated FulfilledCommitment commitments = 1;
 }
 
 // Transaction Manager Service.
