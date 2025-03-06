@@ -171,7 +171,7 @@ message FulfilledCommitment {
   // Kind of Commitment
   common.CommitmentKind kind = 5;
   // Timestamp when commitment was fulfilled, in RFC 3339 format.
-  string fulfilled    = 6;
+  string fulfilled           = 6;
 }
 
 message ListFulfilledCommitmentsResponse {

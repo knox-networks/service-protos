@@ -201,16 +201,23 @@ enum PacketType {
   // Specifies promissores to lock in for a group
   TxnLockGroupPromissories     = 1321;
 
-  // Sent by the Transaction Manager to the participant in response to TxnLockGroupPromissories
+  // Sent by the Transaction Manager to the Participant in response to TxnLockGroupPromissories
   TxnLockGroupPromissoriesAck  = 1322;
 
+  // Sent by the Transaction Manager to the Participant requesting the Participant to sign the contract
   TxnSignContract = 1323;
 
+  // Sent by the Participant in response to receiving the `TxnSignContract` if the Participants successfully signs the contract
   TxnSignContractAck = 1324;
 
+  // Sent by the Participant in response to receiving the `TxnSignContract` if the Participant declines to sign
   TxnSignContractNack = 1325;
 
+  // Sent by the Transaction Manager to all contract Participants which contains the final signed contract
   TxnFinalContract = 1326;
+
+  // Sent by the Participant to the Transaction Manager if the Participant is unable to reserve promissories
+  TxnLockGroupPromissoriesNack = 1327;
 }
 
 // Streaming data packet used across Gateway connections.
@@ -385,6 +392,20 @@ message TxnOutcome {
 
 /* [Example]
 {
+  "ciris": [
+    "UETR#GROUP/COMMITMENT",
+    "UETR#GROUP/COMMITMENT",
+    "UETR#GROUP/COMMITMENT"
+  ]
+}
+*/
+message TxnGroupLockNack {
+  // Commitment IRIs for a group that were not able to be reserved
+  repeated string ciris = 1;
+}
+
+/* [Example]
+{
   "authority": "zAuthorityPublicKey=",
   "batch": "LengthOfFileBytesVaries=",
   "terminal": false
@@ -479,8 +500,8 @@ enum CommitmentKind {
   Burn            = 5;
 }
 
-// Represents a repeatable condition that `Contract` signatories agree must
-// come to pass as a condition of `Contract` fulfillment.
+// Represents a repeatable commitment that `Contract` signatories agree must
+// come to pass in `Contract` fulfillment.
 /* [Example]
 {
   "sender": "zSenderPublicKey",
