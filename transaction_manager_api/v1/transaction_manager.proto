@@ -172,6 +172,8 @@ message FulfilledCommitment {
   common.CommitmentKind kind = 5;
   // Timestamp when commitment was fulfilled, in RFC 3339 format.
   string fulfilled           = 6;
+
+  string asset_code          = 7;
 }
 
 message ListFulfilledCommitmentsResponse {
