@@ -273,12 +273,9 @@ message Packet {
   "urn": "urn:knox:swap:hash-zSender2PublicKey:timeout-165000000:001",
   "memo": "memo string from contract",
   "timestamp": "2006-01-02T15:04:05Z",
-  "metadata": [
-    {
-      "key": "originator",
-      "value": "zSender2PublicKey"
-    }
-  ]
+  "metadata": {
+    "originator": "zSender2PublicKey"
+  }
 }
 */
 message TransactionHeader {
@@ -298,7 +295,7 @@ message TransactionHeader {
   // this to UTC time.
   uint64 timestamp             = 4;
 
-  // metadata that is not derived from Contract contents
+  // [key: string] metadata that is not derived from Contract contents
   // such as the originator of a Contract negotiation
   map<string, string> metadata = 5;
 
@@ -343,23 +340,29 @@ message ReimbursablePromissory {
 
 /* [Example]
 {
-  "commitment": "UETR#GROUP/COMMITMENT",
-  "promissory_batch": [
-    "LengthOfFileBytesVaries=",
-    "LengthOfFileBytesVaries=",
-    "LengthOfFileBytesVaries="
-  ]
+  "promissories": {
+    "promissory_key_1": {
+      "transferred": "LengthOfFileBytesVaries=",
+      "change": "LengthOfFileBytesVaries=",
+      "refund": "LengthOfFileBytesVaries="
+    },
+    "promissory_key_2": {
+      "transferred": "LengthOfFileBytesVaries=",
+      "change": "LengthOfFileBytesVaries=",
+      "refund": "LengthOfFileBytesVaries="
+    }
+  }
 }
 */
 message LockBatchedPromissory {
-  // List of transferred promissory bytes. These are expected to be the
+  // [key: string] List of transferred promissory bytes. These are expected to be the
   // flatbuffer-serialized bytes of a Promissory, not protobuf.
   map<string, ReimbursablePromissory> promissories = 1;
 }
 
 // Sent by the TM in response to a participant locking in their promissories
 message ChangePromissories {
-  // Key is the commitment IRI, value is the flatbuffer-serialized bytes of a Promissory
+  // [key: string] Key is the commitment IRI, value is the flatbuffer-serialized bytes of a Promissory
   map<string, bytes> promissories = 1;
 }
 
@@ -370,11 +373,8 @@ message ChangePromissories {
     "UETR#GROUP/COMMITMENT"
   ],
   "finalized": {
-    "UETR#GROUP/COMMITMENT": "promissory_batch": [
-      "LengthOfFileBytesVaries=",
-      "LengthOfFileBytesVaries=",
-      "LengthOfFileBytesVaries="
-    ],
+    "COMMITMENT_IRI_1": "FlatBufferSerializedBytesOfPromissory1=",
+    "COMMITMENT_IRI_2": "FlatBufferSerializedBytesOfPromissory2="
   },
   "linger": false
 }
@@ -382,7 +382,7 @@ message ChangePromissories {
 message TxnOutcome {
   // List of Commitment IRIs of all commitments that were fulfilled.
   repeated string fulfilled    = 3;
-  // Finalized promissories for each Commitment. The key is the commitment IRI
+  // [key: string] Finalized promissories for each Commitment. The key is the commitment IRI
   // while the value is a flatbuffer-serialized bytes of a Promissory.
   map<string, bytes> finalized = 1;
 
@@ -447,13 +447,11 @@ message AuthorityBlockBatches {
       "LengthOfFileBytesVaries="
     ]
   },
-  "redeem_batches": [],
-  "transfer_batches": {
-    "authority_batches": [
-      {
-        "authority": "zAuthorityPublicKey",
-        "batch": "LengthOfBytesVaries="
-      }
+  "authority_batches": [
+    {
+      "authority": "zAuthorityPublicKey=",
+      "batch": "LengthOfFileBytesVaries=",
+      "terminal": false
     }
   ]
 }

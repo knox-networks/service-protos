@@ -333,7 +333,7 @@ message RequestPresentationResponse {
   "wallet_id": "zWalletIDMultibase58Encoded",
   "api_key": "API_KEY",
   "uetr": "UETR",
-  "accepted": true
+  "accept": true
 }
 */
 message ResumePausedTransactionRequest {

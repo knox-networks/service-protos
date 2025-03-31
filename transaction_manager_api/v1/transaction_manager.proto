@@ -8,26 +8,22 @@ import "common/v1/packet.proto";
 
 /* [Example]
 {
-  "authorities": [
-    {
-      "key": "AuthorityKey",
-      "value": {
-        "verifier": "VerifierLengthVariesByAlgo",
-        "url": "AUTHORITY_URL"
-      }
+  "authorities": {
+    "AuthorityKey1": {
+      "verifier": "AssetAuthorityVerifierLengthVariesByAlgo",
+      "url": "ASSET_AUTHORITY_URL",
+      "decimals": 2
     },
-    {
-      "key": "AuthorityKey2",
-      "value": {
-        "verifier": "VerifierLengthVariesByAlgo",
-        "url": "AUTHORITY2_URL"
-      }
+    "AuthorityKey2": {
+      "verifier": "AssetAuthorityVerifierLengthVariesByAlgo",
+      "url": "ASSET_AUTHORITY_URL",
+      "decimals": 2
     }
-  ]
+  }
 }
 */
 message AddAssetAuthoritiesRequest {
-  // List of Authorities and Assets to Add.
+  // [key: string] List of Asset Authorities to Add.
   map<string, common.AssetAuthority> authorities = 1;
 }
 
@@ -61,7 +57,7 @@ message AddAssetAuthorityResponse {}
 
 /* [Example]
 {
-  "asset_code": "USD",
+  "asset_code": "USD"
 }
 */
 message RemoveAssetAuthorityRequest {
@@ -96,26 +92,22 @@ message GetAssetAuthoritiesRequest {}
 
 /* [Example]
 {
-  "authorities": [
-    {
-      "key": "AuthorityKey",
-      "value": {
-        "verifier": "VerifierLengthVariesByAlgo",
-        "url": "AUTHORITY_URL"
-      }
+  "authorities": {
+    "AuthorityKey1": {
+      "verifier": "AssetAuthorityVerifierLengthVariesByAlgo",
+      "url": "ASSET_AUTHORITY_URL",
+      "decimals": 2
     },
-    {
-      "key": "AuthorityKey2",
-      "value": {
-        "verifier": "VerifierLengthVariesByAlgo",
-        "url": "AUTHORITY2_URL"
-      }
+    "AuthorityKey2": {
+      "verifier": "AssetAuthorityVerifierLengthVariesByAlgo",
+      "url": "ASSET_AUTHORITY_URL",
+      "decimals": 2
     }
-  ]
+  }
 }
 */
 message GetAssetAuthoritiesResponse {
-  // List of Asset Authorities
+  // [key: string] List of Asset Authorities
   map<string, common.AssetAuthority> authorities = 1;
 }
 
@@ -125,6 +117,7 @@ message GetAssetAuthoritiesResponse {
   "end": "2020-02-01T00:00:00Z",
   "participants": [
     "VerifierLengthVariesByAlgo",
+    "VerifierLengthVariesByAlgo"
   ],
   "page": 0,
   "page_size": 10
