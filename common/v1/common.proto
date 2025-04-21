@@ -240,6 +240,30 @@ message Role {
   }
 }
 
+// Request the identity of a given service endpoint, e.g. Issuer, Authority, Treasury.
+/* [Example]
+{}
+*/
+message GetVerifierRequest {}
+
+// Response that contains the verifier (public key) of a service endpoint. Returns both Dynamic Verifier bytes, and
+// multibase encoded formats.
+/* [Example]
+{
+  "bytes": {
+    "signature_system": 1,
+    "verifier": "VerifierLengthChangesByAlgo="
+  },
+  "multibase": "MULTIBASE"
+}
+*/
+message GetVerifierResponse {
+  // Verifier (public key) in Dynamic verifier format.
+  DynamicVerifier bytes = 1;
+  // Verifier (public key) in multibase encoding.
+  string multibase      = 2;
+}
+
 // Request the `ServiceType` of a given service endpoint. e.g. Issuer, Authority, Treasury.
 /* [Example]
 {}
