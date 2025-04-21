@@ -218,6 +218,9 @@ enum PacketType {
 
   // Sent by the Participant to the Transaction Manager if the Participant is unable to reserve promissories
   TxnLockGroupPromissoriesNack = 1327;
+
+  // Sent by the Timeout service to the Transaction Manager to indicate that a commitment group has timed out
+  TxnCommitmentGroupTimeout = 1328;
 }
 
 // Streaming data packet used across Gateway connections.

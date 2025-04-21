@@ -8,36 +8,14 @@ package common;
 enum ServiceType {
   // Service type unknown guards against accidental use of a zero value.
   UnknownService     = 0;
-  // The gateway Service.
-  Gateway            = 1;
-  // Notary Service (Reserved).
-  Notary             = 2;
-  // The Authority Service.
-  Authority          = 3;
-  // The Treasury Service.
-  Treasury           = 4;
-  // The Emissary Service (Reserved).
-  Emissary           = 5;
-  // The Shared Service (Reserved).
-  Shared             = 6;
-  // The Identity Service (Reserved).
-  Identity           = 7;
-  // The Vault Service (Reserved).
-  Vault              = 8;
   // The Custodial Wallet Service.
   CustodialWallet    = 9;
-  // The Issuer Service.
-  Issuer             = 10;
-  // The Overload Service (Reserved).
-  Overload           = 11;
-  // The Faucet Service (Reserved).
-  Faucet             = 12;
   // The TransactionManager Service (Reserved).
   TransactionManager = 13;
-  // The Recovery Service (Reserved).
-  Recovery           = 14;
   // The Banksim Service (Reserved).
   Banksim            = 15;
+    // The Timeout Service (Reserved).
+  Timeout            = 16;
 }
 
 // Used to denote the cryptographic signing & verifying algorithm associated with a particular digital signature or
@@ -262,30 +240,6 @@ message Role {
   }
 }
 
-// Request the identity of a given service endpoint, e.g. Issuer, Authority, Treasury.
-/* [Example]
-{}
-*/
-message GetVerifierRequest {}
-
-// Response that contains the verifier (public key) of a service endpoint. Returns both Dynamic Verifier bytes, and
-// multibase encoded formats.
-/* [Example]
-{
-  "bytes": {
-    "signature_system": 1,
-    "verifier": "VerifierLengthChangesByAlgo="
-  },
-  "multibase": "MULTIBASE"
-}
-*/
-message GetVerifierResponse {
-  // Verifier (public key) in Dynamic verifier format.
-  DynamicVerifier bytes = 1;
-  // Verifier (public key) in multibase encoding.
-  string multibase      = 2;
-}
-
 // Request the `ServiceType` of a given service endpoint. e.g. Issuer, Authority, Treasury.
 /* [Example]
 {}
@@ -301,24 +255,6 @@ message GetServiceTypeRequest {}
 message GetServiceTypeResponse {
   // One of the service types defined in ServiceType.
   ServiceType service_type = 1;
-}
-
-// GetInstanceRequest - Request the Instance of the service, a value generated each time a service
-// is started, can be correlated to a gateway connection_id
-/* [Example]
-{}
-*/
-message GetInstanceRequest {}
-
-// GetInstanceResponse - Respond with a UUID of the particular instance
-/* [Example]
-{
-  "instance_id": "INSTANCE_ID"
-}
-*/
-message GetInstanceResponse {
-  // Instance ID.
-  string instance_id = 1;
 }
 
 // Initiates a Funds Change transaction. Sender is implied to be the owner of the promissories to be sent. Recipient is
