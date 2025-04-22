@@ -8,12 +8,8 @@ import "common/v1/common.proto";
 // ServiceInfo is a common service implemented by several applications so that a service endpoint can be queried to
 // determine the type of service and its public key (i.e. verifier).
 service ServiceInfo {
-  // GetVerifier returns the public key associated with a service endpoint.
-  rpc GetVerifier(GetVerifierRequest) returns (GetVerifierResponse);
   // GetServiceType returns the type of service provided by the endpoint.
   rpc GetServiceType(GetServiceTypeRequest) returns (GetServiceTypeResponse);
-  // GetInstance returns an instance UUID that is distinct per startup
-  rpc GetInstance(GetInstanceRequest) returns (GetInstanceResponse);
 }
 
 // IsProvisionedRequest - Request the service to determine if it is provisioned to perform its duties
