@@ -47,8 +47,8 @@ message DynamicVerifier {
 // An asset code combined with a value representing an amount of the given asset.
 /* [Example]
 {
-  "asset_code":"USD",
-  "value": "10.00",
+  "asset_code": "USD",
+  "value": "10.00"
 }
 */
 message Amount {
@@ -63,24 +63,15 @@ message Amount {
 // sum must match corresponding amount.amount
 /* [Example]
 {
-  "value": [
-    {
-      "key": 20,
-      "value": 2
-    },
-    {
-      "key": 50,
-      "value": 1
-    },
-    {
-      "key": 10,
-      "value": 1
-    }
-  ]
+  "value": {
+    "20": 2,
+    "50": 1,
+    "10": 1
+  }
 }
 */
 message Distribution {
-  // Distribution Values and Amounts.
+  // [key: int64] Distribution Values and Amounts.
   map<int64, int32> value = 1;
 }
 
@@ -191,14 +182,14 @@ message Media {
     "issue_permissions": {
       "inner": [
         {
-          "asset_code":"USD",
-          "amount":100,
-          "decimals":2
+          "asset_code": "USD",
+          "amount": 100,
+          "decimals": 2
         },
         {
-          "asset_code":"USD",
-          "amount":500,
-          "decimals":2
+          "asset_code": "USD",
+          "amount": 500,
+          "decimals": 2
         }
       ]
     }
@@ -213,14 +204,14 @@ message Role {
   {
     "inner": [
       {
-        "asset_code":"USD",
-        "amount":100,
-        "decimals":2
+        "asset_code": "USD",
+        "amount": 100,
+        "decimals": 2
       },
       {
-        "asset_code":"USD",
-        "amount":500,
-        "decimals":2
+        "asset_code": "USD",
+        "amount": 500,
+        "decimals": 2
       }
     ]
   }
@@ -286,9 +277,9 @@ message GetServiceTypeResponse {
 /* [Example]
 {
   "amount": {
-    "asset_code":"USD",
-    "amount":100,
-    "decimals":2
+    "asset_code": "USD",
+    "amount": 100,
+    "decimals": 2
   },
   "promissory": "PROMISSORY_ID_1",
   "user_reference": "USER_PROVIDED_REFERENCE"
@@ -458,8 +449,9 @@ message SortBy {
 
 /* [Example]
 {
-  "verifier": "VerifierLengthVariesByAlgo",
-  "url": "AUTHORITY_URL"
+  "verifier": "AssetAuthorityVerifierLengthVariesByAlgo",
+  "url": "ASSET_AUTHORITY_URL",
+  "decimals": 2
 }
 */
 message AssetAuthority {

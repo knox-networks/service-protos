@@ -14,7 +14,8 @@ import "common/v1/common.proto";
   "metadata": {
     "user_field_1": "some value",
     "user_field_2": "another value"
-  }
+  },
+  "external_id": "EXTERNAL_ID"
 }
 */
 message CreateWalletRequest {
@@ -30,7 +31,7 @@ message CreateWalletRequest {
 {
   "name": "WALLET_NAME",
   "public_key": "zPublicKeyMultibase58Encoded",
-    "metadata": {
+  "metadata": {
     "user_field_1": "some value",
     "user_field_2": "another value"
   }
@@ -50,7 +51,8 @@ message WalletResponse {
 /* [Example]
 {
   "page": 0,
-  "page_size": 10
+  "page_size": 10,
+  "external_id": "EXTERNAL_ID"
 }
 */
 message ListWalletsRequest {
@@ -84,9 +86,9 @@ message ListWalletsResponse {
   uint32 total_count              = 2;
 }
 
-/*
+/* [Example]
 {
-  "name": "WALLET_NAME"
+  "public_key": "zPublicKeyMultibase58Encoded"
 }
 */
 message WalletRequest {
@@ -97,7 +99,8 @@ message WalletRequest {
 // Requests to get the Notary signature for a Notary public key
 /* [Example]
 {
-  "verifier": "NotaryVerifierLengthVariesByAlgo"
+  "notary_verifier": "NotaryVerifierLengthVariesByAlgo",
+  "authority_verifier": "AuthorityVerifierLengthVariesByAlgo"
 }
 */
 message GetNotaryRequest {
@@ -121,7 +124,8 @@ message GetNotaryResponse {
 // Requests the count of files of various denominations for a given currency.
 /* [Example]
 {
-  "asset_code": "USD"
+  "asset_code": "USD",
+  "verifier": "TreasuryVerifierLengthVariesByAlgo"
 }
 */
 message GetSupplyRequest {
