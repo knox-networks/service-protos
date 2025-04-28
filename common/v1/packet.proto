@@ -576,25 +576,21 @@ message HashCondition {
 
 // Represents a condition on the `Contract` to indicate that the only commitment
 // in the contract is for minting.
+// Note prior field `distribution` is deprecated and should not be used.
 /* [Example]
 {
   "issuer": "zIssuerPublicKey",
-  "distribution": {
-    "value": [
-      {
-        "key": 20,
-        "value": 2
-      }
-    ]
-  },
   "no_encumbrance": false
 }
 */
 message MintCondition {
   // Public key of the issuer
   string issuer                    = 1;
-  // Sum must match corresponding amount in the commitment
-  common.Distribution distribution = 2;
+
+  // Deprecated field distribution
+  reserved 2;
+  reserved "distribution";
+
   // Flag to disable encumbrance, to distinguish between issue and mint flows
   bool no_encumbrance              = 3;
 }

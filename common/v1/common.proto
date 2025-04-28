@@ -58,32 +58,6 @@ message Amount {
   string value      = 2;
 }
 
-// Represents a desired denomination distribution.
-// map<mantissa, quantity>
-// sum must match corresponding amount.amount
-/* [Example]
-{
-  "value": [
-    {
-      "key": 20,
-      "value": 2
-    },
-    {
-      "key": 50,
-      "value": 1
-    },
-    {
-      "key": 10,
-      "value": 1
-    }
-  ]
-}
-*/
-message Distribution {
-  // Distribution Values and Amounts.
-  map<int64, int32> value = 1;
-}
-
 // Used to start an authentication flow
 /* [Example]
 {
