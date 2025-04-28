@@ -575,27 +575,6 @@ message HashCondition {
 }
 
 // Represents a condition on the `Contract` to indicate that the only commitment
-// in the contract is for minting.
-// Note prior field `distribution` is deprecated and should not be used.
-/* [Example]
-{
-  "issuer": "zIssuerPublicKey",
-  "no_encumbrance": false
-}
-*/
-message MintCondition {
-  // Public key of the issuer
-  string issuer                    = 1;
-
-  // Deprecated field distribution
-  reserved 2;
-  reserved "distribution";
-
-  // Flag to disable encumbrance, to distinguish between issue and mint flows
-  bool no_encumbrance              = 3;
-}
-
-// Represents a condition on the `Contract` to indicate that the only commitment
 // in the contract is for redeeming.
 /* [Example]
 {
@@ -628,8 +607,8 @@ message Condition {
     TimeoutCondition timeout = 1;
     // Hash Condition Option.
     HashCondition hash       = 2;
-    // Mint Condition Option.
-    MintCondition mint       = 3;
+    // reserved for backward compatibility (formerly MintCondition mint)
+    reserved 3, "mint";
     // Redeem Condition Option.
     RedeemCondition redeem   = 4;
   }
