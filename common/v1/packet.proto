@@ -607,11 +607,12 @@ message Condition {
     TimeoutCondition timeout = 1;
     // Hash Condition Option.
     HashCondition hash       = 2;
-    // reserved for backward compatibility (formerly MintCondition mint)
-    reserved 3, "mint";
     // Redeem Condition Option.
     RedeemCondition redeem   = 4;
   }
+  // reserved for backward compatibility (formerly MintCondition mint)
+  reserved 3;
+  reserved "mint";
 }
 
 // Contract type
