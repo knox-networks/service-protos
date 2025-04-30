@@ -480,7 +480,9 @@ message GetContractDetailResponse {
   // Type of this contract
   string contract_type                   = 1;
   // Lists all fund transfers specified in the contract
-  repeated common.Commitment commitments = 2;
+  reserved 2;
+  reserved "commitments";
+  
   // [RFC3339 Timestamp] Time the contract was created
   string created                         = 4;
   // [MultibaseVerifier] that is responsible for presenting the secret
