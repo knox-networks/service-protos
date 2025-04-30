@@ -444,16 +444,3 @@ message AssetAuthority {
   // Maximum number of digits right of the decimal (Max supported value is 30)
   uint32 decimals  = 3;
 }
-
-/* [Example]
-{
-  "denominations": [1, 5, 10, 25, 100, 200, 500, 1000],
-  "precision": 2
-}
-*/
-message AssetDenomination {
-  // Denominations allowed, e.g. [1, 5, 10, 25, 100, etc.].
-  repeated int64 denominations = 1;
-  // Precision for Asset (decimals places), e.g. USD $1.00 = 2.
-  uint32 precision             = 2;
-}
