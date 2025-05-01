@@ -160,34 +160,6 @@ message DenominationCount {
 // Provides a list of file denominations in the Treasury service's Vault.
 /* [Example]
 {
-  "supply": [
-    {
-      "denomination": {
-        "asset_code": "USD",
-        "amount": 2000,
-        "decimals": 2
-      },
-      "count": 5,
-      "total": {
-        "asset_code": "USD",
-        "amount": 10000,
-        "decimals": 2
-      }
-    },
-    {
-      "denomination": {
-        "asset_code": "USD",
-        "amount": 1000,
-        "decimals": 2
-      },
-      "count": 5,
-      "total": {
-        "asset_code": "USD",
-        "amount": 5000,
-        "decimals": 2
-      }
-    }
-  ],
   "total": {
     "asset_code": "USD",
     "amount": 15000,
@@ -197,7 +169,9 @@ message DenominationCount {
 */
 message GetSupplyResponse {
   // A list of denomination counts of the digital banknotes held in supply.
-  repeated DenominationCount supply = 1;
+  reserved 1;
+  reserved "supply";
+
   // grand total sum of all promissories
   common.Amount total               = 2;
 }
