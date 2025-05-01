@@ -163,3 +163,47 @@ message ConnectionWithData {
   reserved 2;
   reserved "packet";
 }
+
+enum CommitmentKind {
+  // Unspecified
+  UnspecifiedKind = 0;
+  // Transfer
+  Transfer        = 1;
+  
+  // Issue with encumbrance
+  reserved 2;
+  reserved "Issue";
+  // Redeem with encumbrance
+  reserved 3;
+  reserved "Redeem";
+
+  // Mint with no encumbrance
+  Mint            = 4;
+  // Burn with no encumbrance
+  Burn            = 5;
+}
+
+// Represents a repeatable commitment that `Contract` signatories agree must
+// come to pass in `Contract` fulfillment.
+/* [Example]
+{
+  "sender": "zSenderPublicKey",
+  "recipient": "zRecipientPublicKey",
+  "amount": {
+    "asset_code":"USD",
+    "amount":100,
+    "decimals":2
+  },
+  "kind": "Transfer"
+}
+*/
+message Commitment {
+  // Sender Public Key
+  string sender       = 1;
+  // Recipient Public Key
+  string recipient    = 2;
+  // Amount of Commitment
+  Amount amount       = 3;
+  // Kind of Commitment
+  CommitmentKind kind = 4;
+}

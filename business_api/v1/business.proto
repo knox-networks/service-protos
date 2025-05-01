@@ -103,8 +103,7 @@ message SendNewTransactionRequest {
   // Transaction Memo.
   string memo                            = 2;
   // Commitments.
-  reserved 3;
-  reserved "commitments";
+  repeated common.Commitment commitments = 3;
 
   // Conditions.
   reserved 4;
