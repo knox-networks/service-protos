@@ -164,19 +164,16 @@ message ConnectionWithData {
   reserved "packet";
 }
 
+
 enum CommitmentKind {
   // Unspecified
   UnspecifiedKind = 0;
   // Transfer
   Transfer        = 1;
-  
   // Issue with encumbrance
-  reserved 2;
-  reserved "Issue";
+  Issue           = 2;
   // Redeem with encumbrance
-  reserved 3;
-  reserved "Redeem";
-
+  Redeem          = 3;
   // Mint with no encumbrance
   Mint            = 4;
   // Burn with no encumbrance
