@@ -5,309 +5,6 @@ import "common/v1/common.proto";
 
 // THIS PROTO FILE IS INTENDED FOR USE FOR KNOX AND KNOX CUSTOMERS.
 
-// Describes the `bytes` field contents of the parent `Packet` object.
-// Used in routing and decoding.
-enum PacketType {
-  // ---------------------------
-  // Gateway Control Flow Packets 0..49
-  // ---------------------------
-
-  // Unspecified packet type
-  // default behavior is to drop the packet
-  Unknown                      = 0;
-  // Unsupported packet
-  // default behavior is to return the packet
-  Unsupported                  = 1;
-  // Authenticate connection
-  // Used to verify the verifier public key ownership
-  // corresponds to `AuthenticationRequest` message
-  // TODO rename -> ConnectionRequest
-  Authenticate                 = 2;
-  // Authenticate connection
-  // Used to verify the verifier public key ownership
-  // corresponds to `AuthenticationRequest` message
-  // TODO rename -> ConnectionRequest
-  ConnectionAuthenticated      = 7;
-
-  // Life signal packet
-  // Used to signal the gateway and/or client that the connection is still alive
-  KeepAlive                    = 5;
-  // Acknowledgement of packet
-  // Used by a recipient to signal to the sender of the a packet that it has been received.
-  Acknowledgement              = 6;
-  // --- ConnectionPool flow ---
-  // Used to indicate an associated identity addition, sent to the server
-  AddAssociatedConnection      = 9;
-  // Used to indicate an associated identity drop, sent to the server
-  DropAssociatedConnection     = 10;
-  // Used to indicate an associated Uetr connection addition, sent to the client
-  AssociatedConnectionAdded    = 11;
-  // Used to indicate an associated Uetr connection drop, sent to the client
-  AssociatedConnectionDropped  = 12;
-  // Used to indicate an AssociatedConnectionAdded with a nested packet sent to the client
-  AssociatedConnectionWithData = 13;
-  // Used for internal testing
-  Test                         = 14;
-
-  // ---------------------------
-  // General Packets 50..99
-  // ---------------------------
-
-  // ---------------------------
-  // Identity Packets 200..299
-  // ---------------------------
-
-  // Identity Request
-  // Request identity of a verifier in the network
-  // Corresponds to `IdentityRequest` message
-  IdentityRequest              = 200;
-  // Identity Response
-  // Response to identity request
-  // Corresponds to `IdentityResponse` message
-  IdentityResponse             = 201;
-  // Identity proof
-  // Identity proof to be added to subject DID document
-  // Corresponds to `IdentityProof`
-  IdentityProof                = 202;
-
-  // ---------------------------
-  // Notary Packets 300..399
-  // ---------------------------
-
-  // Notarization Batch
-  // Request for authorized signature with a payload of NotarizationRequestData.
-  // Notary replies with an AuthorizedNotarizationBatch packet.
-  AuthorizationRequest         = 300;
-  // Authorized Notarization Batch
-  // Response to a AuthorizationRequest with a payload of NotarizationResponseData.
-  AuthorizationResponse        = 301;
-  // AuthorizationFailure
-  // Response from the Notary in the even of a failure to Notarize.
-  AuthorizationFailed          = 302;
-
-  // ---------------------------
-  // Emissary Packets 400..499
-  // ---------------------------
-
-  // EmissaryBroadcast
-  // Signal to the Emissary to broadcast a data payload to all of the Emissary
-  // server's connections.
-  EmissaryBroadcast            = 400;
-
-  // ---------------------------
-  // Contract Packets 500..599
-  // ---------------------------
-
-  // Contract Commitment
-  // Update a contract with the addition of a commitment
-  ContractProposal             = 500;
-  // Contract Ack
-  // Acknowledgement to participate in contract
-  ContractProposalAck          = 501;
-  // Contract Nack
-  // Acknowledgement to reject a contract
-  ContractProposalNack         = 502;
-  // Contract Signature
-  // Updates a contract with the addition of a signature
-  ContractSignature            = 503;
-  // Holds a finalized contract in the packet data field
-  ContractComplete             = 504;
-  // Broadcast from the contact initiator that contract negotiation is cancelled
-  ContractCancelled            = 505;
-
-  // ---------------------------
-  // Recovery Packets 600..699
-  // ---------------------------
-  // Message sent by a coordinator to the participant in response to a recovery request,
-  // which the participant can use to determine where in the process to recover from.
-  TxnRecoveryResponse          = 600;
-
-  // Message sent by the participant of a transaction to the Transaction Manager. The
-  // Transaction Manager responds with the TxnRecoveryResponse packet so the participant can
-  // recover the transaction.
-  TxnRecoveryRequest           = 601;
-
-  // ---------------------------
-  // Contract Based Transaction Packets 1300..1399
-  // ---------------------------
-
-  // Lock Promissory Batch Ack
-  // Notice from TM that the batch of promissories was submitted.
-  TxnCommitmentLocked          = 1302;
-
-  // Retrieve Assets
-  // Request to have a notary send Promissory packets back to the requester for each
-  // promissory related to a given transaction and owned by the requester.
-  RetrieveAssetsRequest        = 1303;
-  // Response by TM AssetTransferSm to the contract participants, providing them
-  // the final asset transfer of the transaction as well as any new promissories for the recipient.
-  RetrieveAssetsResponse       = 1304;
-
-  // Payer instruction to the Transaction Manager to start a new contract
-  // payment using a signed contract.
-  TxnOpenRequest               = 1305;
-  // Transaction Manager acknowledgement of the contract payment using the
-  // provided signed contract.
-  TxnOpenResponse              = 1306;
-
-  // Transaction Manager acknowledgement to the contract participants that the assets have been
-  // authorized and are ready to be retrieved.
-  TxnAssetsAuthorized          = 1307;
-
-  // Message sent from the Transaction Manager to the Hash Provider in a HTLC contract. This
-  // indicates a request for the recipient to provide the secret.
-  TxnSecretRequest             = 1308;
-  // Message sent from a participant in response to receiving a `TxnSecretRequest` packet
-  TxnSecretResponse            = 1309;
-  // Message sent from a TM to all participants broadcasting the finalized secret for
-  // a given transaction.
-  TxnSecretBroadcast           = 1310;
-
-  // Message sent by the Transaction Manager to the contract participants in the event
-  // the transaction was unable to complete.
-  TxnCancelled                 = 1311;
-
-  // Transaction Manager negative-acknowledgement of the contract payment using the
-  // provided signed contract.
-  TxnContractNack              = 1312;
-
-  // Message sent by the Transaction Manager to the contract participants, informing them
-  // to send their promissories.
-  TxnActiveGroup               = 1313;
-
-  // Used by participants to request the current active group of an ongoing transaction.
-  TxnActiveGroupRequest        = 1314;
-
-  // Message sent by a Participant to the Transaction Manager with the commitment IRI in the header
-  // and an asset back in the data field.
-  TxnCommitment                = 1315;
-
-  // Message sent by a participant while the transaction is in progress to indicate that the
-  // participant can no longer fulfill the contract and has withdrawn from the transaction.
-  TxnParticipationWithdrawn    = 1316;
-
-  // Sent by the Transaction Manager indicating a new transaction.
-  TxnNew                       = 1317;
-
-  // Sent to the Transaction Manager in response to TxnNew indicating the wallet is ready.
-  TxnNewAck                    = 1318;
-
-  // Sent by the Transaction Manager requesting a commitment to be locked in.
-  TxnCommitmentRequest         = 1319;
-
-  // Sent to the Transaction Manager to lock in a commitment.
-  TxnLockCommitment            = 1320;
-
-  // Specifies promissores to lock in for a group
-  TxnLockGroupPromissories     = 1321;
-
-  // Sent by the Transaction Manager to the Participant in response to TxnLockGroupPromissories
-  TxnLockGroupPromissoriesAck  = 1322;
-
-  // Sent by the Transaction Manager to the Participant requesting the Participant to sign the contract
-  TxnSignContract = 1323;
-
-  // Sent by the Participant in response to receiving the `TxnSignContract` if the Participants successfully signs the contract
-  TxnSignContractAck = 1324;
-
-  // Sent by the Participant in response to receiving the `TxnSignContract` if the Participant declines to sign
-  TxnSignContractNack = 1325;
-
-  // Sent by the Transaction Manager to all contract Participants which contains the final signed contract
-  TxnFinalContract = 1326;
-
-  // Sent by the Participant to the Transaction Manager if the Participant is unable to reserve promissories
-  TxnLockGroupPromissoriesNack = 1327;
-
-  // Sent by the Timeout service to the Transaction Manager to indicate that a commitment group has timed out
-  TxnCommitmentGroupTimeout = 1328;
-}
-
-// Streaming data packet used across Gateway connections.
-/* [Example]
-{
-  "packet_type": 100,
-  "data": "LengthVariesBasedOnData=",
-  "sender": {
-    "signature_system": 1,
-    "verifier": "BytesLengthOfSenderVerifierVariesByAlgo="
-  },
-  "recipient": {
-    "signature_system": 1,
-    "verifier": "AlgoVariesRecipientVerifierBytesLen="
-  },
-  "nonce": "NonceBytesLenVaryByAlgo=",
-  "transaction_header": {
-    "starter": {
-      "signature_system": 1,
-      "verifier": "BytesLenStarterVerifierVariesByAlgo="
-    },
-    "responder": {
-      "signature_system": 1,
-      "verifier": "AlgoVariesResponderVerifierBytesLen="
-    },
-    "uetr": "UETR",
-    "timestamp": "2006-01-02T15:04:05Z",
-    "signature": "ByteLengthSignatureVariesByAlgo=",
-    "user_reference": "USER_REFERENCE"
-  }
-}
-*/
-message Packet {
-  // Packet type for determining deserialization scheme and processing
-  PacketType packet_type               = 1;
-  // Raw byte data corresponding to message type
-  bytes data                           = 2;
-  // Verifier of sender
-  DynamicVerifier sender               = 4;
-  // Verifier of recipient
-  DynamicVerifier recipient            = 5;
-  // Nonce used to guard against replay attacks
-  bytes nonce                          = 6;
-  // optional transaction header
-  TransactionHeader transaction_header = 7;
-}
-
-// Encasulates all cross-network metadata that associates
-// a `Packet` with a given transaction.
-/* [Example]
-{
-  "uetr": "UETR1",
-  "urn": "urn:knox:swap:hash-zSender2PublicKey:timeout-165000000:001",
-  "memo": "memo string from contract",
-  "timestamp": "2006-01-02T15:04:05Z",
-  "metadata": [
-    {
-      "key": "originator",
-      "value": "zSender2PublicKey"
-    }
-  ]
-}
-*/
-message TransactionHeader {
-  // Universal e2e transaction reference. Term used for UUIDv4 in financial
-  // messaging such as ISO20022.
-  string uetr                  = 1;
-
-  // A Uniform Resource Name that describes the attributes of the underlying
-  // contract such as if one of the conditions involves an HTLC
-  string urn                   = 2;
-
-  // User reference string for transactions acting as a memo field.
-  string memo                  = 3;
-
-  // Seconds (minus leapsconds) since epoch 1970 - Unix timestamp - always
-  // interpreted as being in the UTC timezone. Internal operations will convert
-  // this to UTC time.
-  uint64 timestamp             = 4;
-
-  // metadata that is not derived from Contract contents
-  // such as the originator of a Contract negotiation
-  map<string, string> metadata = 5;
-
-  // optional debuf info
-  optional bytes report        = 6;
-}
 
 /* [Example]
 {
@@ -407,139 +104,6 @@ message TxnGroupLockNack {
   repeated string ciris = 1;
 }
 
-/* [Example]
-{
-  "authority": "zAuthorityPublicKey=",
-  "batch": "LengthOfFileBytesVaries=",
-  "terminal": false
-}
-*/
-message AuthorityBlockBatch {
-  // Authority verifier
-  string authority = 1;
-  // Validation block bytes. These are expected to be the flatbuffer-serialized
-  // bytes of a block batch, not protobuf.
-  bytes batch      = 2;
-  // Flag to indicate if the batch contains terminal blocks (for redeem)
-  bool terminal    = 3;
-}
-
-/* [Example]
-{
-  "authority_batches": [
-    {
-      "authority": "zAuthorityPublicKey=",
-      "batch": "LengthOfFileBytesVaries=",
-      "terminal": false
-    }
-  ]
-}
-*/
-message AuthorityBlockBatches {
-  // List of validation block batches along with the corresponding Authority
-  // verifier.
-  repeated AuthorityBlockBatch authority_batches = 1;
-}
-
-/* [Example]
-{
-  "issue_batch": {
-    "promissory_batch": [
-      "LengthOfFileBytesVaries=",
-      "LengthOfFileBytesVaries=",
-      "LengthOfFileBytesVaries="
-    ]
-  },
-  "redeem_batches": [],
-  "transfer_batches": {
-    "authority_batches": [
-      {
-        "authority": "zAuthorityPublicKey",
-        "batch": "LengthOfBytesVaries="
-      }
-    }
-  ]
-}
-*/
-message NotarizationRequestData {
-  // Batch of promissories for issuance
-  BatchedPromissory issue_batch          = 1;
-  // Batches for transfers grouped by authority
-  AuthorityBlockBatches transfer_batches = 2;
-}
-
-/* [Example]
-{
-  "issue_batch": {
-    "promissory_batch": [
-      "LengthOfFileBytesVaries=",
-      "LengthOfFileBytesVaries=",
-      "LengthOfFileBytesVaries="
-    ]
-  },
-  "transfer_batch": "LengthOfBatchBytesVaries="
-}
-*/
-message NotarizationResponseData {
-  // Batch of authorized promissories for issuance
-  BatchedPromissory issue_batch = 1;
-  // Batch of authorized blocks for transfers (both redeem and non-redeem)
-  bytes transfer_batch          = 2;
-}
-
-// The various commitment kinds.
-enum CommitmentKind {
-  // Unspecified
-  UnspecifiedKind = 0;
-  // Transfer
-  Transfer        = 1;
-  // Issue with encumbrance
-  Issue           = 2;
-  // Redeem with encumbrance
-  Redeem          = 3;
-  // Mint with no encumbrance
-  Mint            = 4;
-  // Burn with no encumbrance
-  Burn            = 5;
-}
-
-// Represents a repeatable commitment that `Contract` signatories agree must
-// come to pass in `Contract` fulfillment.
-/* [Example]
-{
-  "sender": "zSenderPublicKey",
-  "recipient": "zRecipientPublicKey",
-  "amount": {
-    "asset_code":"USD",
-    "amount":100,
-    "decimals":2
-  },
-  "kind": "Transfer"
-}
-*/
-message Commitment {
-  // Sender Public Key
-  string sender       = 1;
-  // Recipient Public Key
-  string recipient    = 2;
-  // Amount of Commitment
-  Amount amount       = 3;
-  // Kind of Commitment
-  CommitmentKind kind = 4;
-}
-
-// Represents a condition on the `Contract` to expire and rollback the contract
-// transaction if it is not fulfilled by the given timeout timestamp.
-/* [Example]
-{
-  "timeout": 1687180000
-}
-*/
-message TimeoutCondition {
-  // Unix timestamp of timeout datetime.
-  uint64 timeout = 1;
-}
-
 // Represents the algorithm used to derive the hash value in the `HashCondition`.
 enum HashAlgorithm {
   // SHA 256 Algorithm
@@ -554,119 +118,6 @@ enum HashAlgorithm {
   KECCAK256 = 4;
   // KECCAK 512 Algorithm
   KECCAK512 = 5;
-}
-
-// Represents a condition on the `Contract` to require a secret to be presented
-// that matches the given hash before fund transfers are fully committed.
-/* [Example]
-{
-  "presenter": "PresenterPublicKey",
-  "hash": "13550350a8681c84"
-}
-*/
-message HashCondition {
-  // Public key of the participant that will present the secret.
-  string presenter    = 1;
-  // Hash of the secret, populated by the presenter during contract
-  // negotiation.
-  bytes hash          = 2;
-  // OID of algorithm used to generate hash.
-  bytes algorithm_oid = 3;
-}
-
-// Represents a condition on the `Contract` to indicate that the only commitment
-// in the contract is for minting.
-/* [Example]
-{
-  "issuer": "zIssuerPublicKey",
-  "distribution": {
-    "value": [
-      {
-        "key": 20,
-        "value": 2
-      }
-    ]
-  },
-  "no_encumbrance": false
-}
-*/
-message MintCondition {
-  // Public key of the issuer
-  string issuer                    = 1;
-  // Sum must match corresponding amount in the commitment
-  common.Distribution distribution = 2;
-  // Flag to disable encumbrance, to distinguish between issue and mint flows
-  bool no_encumbrance              = 3;
-}
-
-// Represents a condition on the `Contract` to indicate that the only commitment
-// in the contract is for redeeming.
-/* [Example]
-{
-  "issuer": "zIssuerPublicKey",
-  "no_encumbrance": false
-}
-*/
-message RedeemCondition {
-  // Public key of the issuer
-  string issuer       = 1;
-  // Flag to disable encumbrance, to distinguish between redeem and burn flows
-  bool no_encumbrance = 2;
-}
-
-// Represents one of the possible conditions applied to the `Contract`.
-/* [Example]
-{
-  "condition": {
-    "hash": {
-      "presenter": "PresenterPublicKey",
-      "hash": "13550350a8681c84"
-    }
-  }
-}
-*/
-message Condition {
-  // Condition Options.
-  oneof condition {
-    // Timeout Condition Option.
-    TimeoutCondition timeout = 1;
-    // Hash Condition Option.
-    HashCondition hash       = 2;
-    // Mint Condition Option.
-    MintCondition mint       = 3;
-    // Redeem Condition Option.
-    RedeemCondition redeem   = 4;
-  }
-}
-
-// Contract type
-enum ContractType {
-  // Status Unspecified.
-  CONTRACT_TYPE_UNSPECIFIED = 0;
-
-  // Simple a-to-b payment.
-  CONTRACT_TYPE_PAYMENT     = 1;
-
-  // Transfer between 2 or more parties.
-  CONTRACT_TYPE_SWAP        = 2;
-
-  // Multi-party unidirectional payment.
-  CONTRACT_TYPE_RELAY       = 3;
-
-  // Custom contract type.
-  CONTRACT_TYPE_CUSTOM      = 4;
-
-  // Issue new promissories.
-  CONTRACT_TYPE_ISSUE       = 5;
-
-  // Redeem promissories.
-  CONTRACT_TYPE_REDEEM      = 6;
-
-  // Mint promissories
-  CONTRACT_TYPE_MINT        = 7;
-
-  // Burn promissories
-  CONTRACT_TYPE_BURN        = 8;
 }
 
 // The message sent during an already established connection allowing the addition or removal of an
@@ -709,21 +160,47 @@ message ConnectionWithData {
   // Associated connection key
   bytes key     = 1;
   // inner packet
-  Packet packet = 2;
+  reserved 2;
+  reserved "packet";
 }
 
+
+enum CommitmentKind {
+  // Unspecified
+  UnspecifiedKind = 0;
+  // Transfer
+  Transfer        = 1;
+  // Issue with encumbrance
+  Issue           = 2;
+  // Redeem with encumbrance
+  Redeem          = 3;
+  // Mint with no encumbrance
+  Mint            = 4;
+  // Burn with no encumbrance
+  Burn            = 5;
+}
+
+// Represents a repeatable commitment that `Contract` signatories agree must
+// come to pass in `Contract` fulfillment.
 /* [Example]
 {
-  "all_asset_ids": [
-    "UUIDv4"
-  ],
-  "promissory_batch": "FbFileBytes="
+  "sender": "zSenderPublicKey",
+  "recipient": "zRecipientPublicKey",
+  "amount": {
+    "asset_code":"USD",
+    "amount":100,
+    "decimals":2
+  },
+  "kind": "Transfer"
 }
 */
-message TxnFinalPromissories {
-  // List of all asset ids that were finalized in  the transaction, regardless of the owner.
-  repeated string all_asset_ids = 1;
-  // List of transferred promissory bytes. These are expected to be the
-  // flatbuffer-serialized bytes of a Promissory, not protobuf.
-  bytes promissory_batch        = 2;
+message Commitment {
+  // Sender Public Key
+  string sender       = 1;
+  // Recipient Public Key
+  string recipient    = 2;
+  // Amount of Commitment
+  Amount amount       = 3;
+  // Kind of Commitment
+  CommitmentKind kind = 4;
 }

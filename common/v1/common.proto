@@ -58,32 +58,6 @@ message Amount {
   string value      = 2;
 }
 
-// Represents a desired denomination distribution.
-// map<mantissa, quantity>
-// sum must match corresponding amount.amount
-/* [Example]
-{
-  "value": [
-    {
-      "key": 20,
-      "value": 2
-    },
-    {
-      "key": 50,
-      "value": 1
-    },
-    {
-      "key": 10,
-      "value": 1
-    }
-  ]
-}
-*/
-message Distribution {
-  // Distribution Values and Amounts.
-  map<int64, int32> value = 1;
-}
-
 // Used to start an authentication flow
 /* [Example]
 {
@@ -469,17 +443,4 @@ message AssetAuthority {
   string url      = 2;
   // Maximum number of digits right of the decimal (Max supported value is 30)
   uint32 decimals  = 3;
-}
-
-/* [Example]
-{
-  "denominations": [1, 5, 10, 25, 100, 200, 500, 1000],
-  "precision": 2
-}
-*/
-message AssetDenomination {
-  // Denominations allowed, e.g. [1, 5, 10, 25, 100, etc.].
-  repeated int64 denominations = 1;
-  // Precision for Asset (decimals places), e.g. USD $1.00 = 2.
-  uint32 precision             = 2;
 }
