@@ -8,26 +8,22 @@ import "common/v1/packet.proto";
 
 /* [Example]
 {
-  "authorities": [
-    {
-      "key": "AuthorityKey",
-      "value": {
-        "verifier": "VerifierLengthVariesByAlgo",
-        "url": "AUTHORITY_URL"
-      }
+  "authorities": {
+    "AuthorityKey": {
+      "verifier": "VerifierLengthVariesByAlgo",
+      "url": "AUTHORITY_URL"
     },
-    {
-      "key": "AuthorityKey2",
-      "value": {
-        "verifier": "VerifierLengthVariesByAlgo",
-        "url": "AUTHORITY2_URL"
-      }
+    "AuthorityKey2": {
+      "verifier": "VerifierLengthVariesByAlgo",
+      "url": "AUTHORITY2_URL"
     }
-  ]
+  }
 }
 */
 message AddAssetAuthoritiesRequest {
   // List of Authorities and Assets to Add.
+  // [key]: string
+  // [value]: AssetAuthority
   map<string, common.AssetAuthority> authorities = 1;
 }
 
@@ -61,7 +57,7 @@ message AddAssetAuthorityResponse {}
 
 /* [Example]
 {
-  "asset_code": "USD",
+  "asset_code": "USD"
 }
 */
 message RemoveAssetAuthorityRequest {
@@ -96,26 +92,22 @@ message GetAssetAuthoritiesRequest {}
 
 /* [Example]
 {
-  "authorities": [
-    {
-      "key": "AuthorityKey",
-      "value": {
-        "verifier": "VerifierLengthVariesByAlgo",
-        "url": "AUTHORITY_URL"
-      }
+  "authorities": {
+    "AuthorityKey": {
+      "verifier": "VerifierLengthVariesByAlgo",
+      "url": "AUTHORITY_URL"
     },
-    {
-      "key": "AuthorityKey2",
-      "value": {
-        "verifier": "VerifierLengthVariesByAlgo",
-        "url": "AUTHORITY2_URL"
-      }
+    "AuthorityKey2": {
+      "verifier": "VerifierLengthVariesByAlgo",
+      "url": "AUTHORITY2_URL"
     }
-  ]
+  }
 }
 */
 message GetAssetAuthoritiesResponse {
   // List of Asset Authorities
+  // [key]: string
+  // [value]: AssetAuthority
   map<string, common.AssetAuthority> authorities = 1;
 }
 
@@ -124,7 +116,7 @@ message GetAssetAuthoritiesResponse {
   "start": "2020-01-01T00:00:00Z",
   "end": "2020-02-01T00:00:00Z",
   "participants": [
-    "VerifierLengthVariesByAlgo",
+    "VerifierLengthVariesByAlgo"
   ],
   "page": 0,
   "page_size": 10
