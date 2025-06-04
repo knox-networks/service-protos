@@ -320,12 +320,13 @@ message ListInstitutionsResponse {
     string created            = 4;
   }
 
+  // List of Institutions.
   repeated Institution institutions = 1;
 }
 
 /* [Example]
 {
-  "id": "coqeifhm",
+  "id": "coqeifhm"
 }
 */
 message RemoveInstitutionRequest {
