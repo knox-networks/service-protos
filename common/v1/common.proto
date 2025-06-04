@@ -8,36 +8,14 @@ package common;
 enum ServiceType {
   // Service type unknown guards against accidental use of a zero value.
   UnknownService     = 0;
-  // The gateway Service.
-  Gateway            = 1;
-  // Notary Service (Reserved).
-  Notary             = 2;
-  // The Authority Service.
-  Authority          = 3;
-  // The Treasury Service.
-  Treasury           = 4;
-  // The Emissary Service (Reserved).
-  Emissary           = 5;
-  // The Shared Service (Reserved).
-  Shared             = 6;
-  // The Identity Service (Reserved).
-  Identity           = 7;
-  // The Vault Service (Reserved).
-  Vault              = 8;
   // The Custodial Wallet Service.
   CustodialWallet    = 9;
-  // The Issuer Service.
-  Issuer             = 10;
-  // The Overload Service (Reserved).
-  Overload           = 11;
-  // The Faucet Service (Reserved).
-  Faucet             = 12;
   // The TransactionManager Service (Reserved).
   TransactionManager = 13;
-  // The Recovery Service (Reserved).
-  Recovery           = 14;
   // The Banksim Service (Reserved).
   Banksim            = 15;
+    // The Timeout Service (Reserved).
+  Timeout            = 16;
 }
 
 // Used to denote the cryptographic signing & verifying algorithm associated with a particular digital signature or
@@ -78,23 +56,6 @@ message Amount {
   string asset_code = 1;
   // Numerical value of this amount represented as a decimal string.
   string value      = 2;
-}
-
-// Represents a desired denomination distribution.
-// map<mantissa, quantity>
-// sum must match corresponding amount.amount
-/* [Example]
-{
-  "value": {
-    "20": 2,
-    "50": 1,
-    "10": 1
-  }
-}
-*/
-message Distribution {
-  // [key: int64] Distribution Values and Amounts.
-  map<int64, int32> value = 1;
 }
 
 // Used to start an authentication flow
@@ -294,24 +255,6 @@ message GetServiceTypeResponse {
   ServiceType service_type = 1;
 }
 
-// GetInstanceRequest - Request the Instance of the service, a value generated each time a service
-// is started, can be correlated to a gateway connection_id
-/* [Example]
-{}
-*/
-message GetInstanceRequest {}
-
-// GetInstanceResponse - Respond with a UUID of the particular instance
-/* [Example]
-{
-  "instance_id": "INSTANCE_ID"
-}
-*/
-message GetInstanceResponse {
-  // Instance ID.
-  string instance_id = 1;
-}
-
 // Initiates a Funds Change transaction. Sender is implied to be the owner of the promissories to be sent. Recipient is
 // the well known Treasury verifier provided at startup.
 /* [Example]
@@ -501,17 +444,4 @@ message AssetAuthority {
   string url      = 2;
   // Maximum number of digits right of the decimal (Max supported value is 30)
   uint32 decimals  = 3;
-}
-
-/* [Example]
-{
-  "denominations": [1, 5, 10, 25, 100, 200, 500, 1000],
-  "precision": 2
-}
-*/
-message AssetDenomination {
-  // Denominations allowed, e.g. [1, 5, 10, 25, 100, etc.].
-  repeated int64 denominations = 1;
-  // Precision for Asset (decimals places), e.g. USD $1.00 = 2.
-  uint32 precision             = 2;
 }

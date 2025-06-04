@@ -161,8 +161,10 @@ message FulfilledCommitment {
   string recipient           = 3;
   // Amount of Commitment
   common.Amount amount       = 4;
-  // Kind of Commitment
+
+  // Kind of Commitment removed
   common.CommitmentKind kind = 5;
+
   // Timestamp when commitment was fulfilled, in RFC 3339 format.
   string fulfilled           = 6;
 }
