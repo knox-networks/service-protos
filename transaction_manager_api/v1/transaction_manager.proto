@@ -168,6 +168,36 @@ message FulfilledCommitment {
   string fulfilled           = 6;
 }
 
+/* [Example]
+{
+  "commitments": [
+    {
+      "uetr": "UETR",
+      "sender": "zSenderPublicKey",
+      "recipient": "zRecipientPublicKey",
+      "amount": {
+        "asset_code":"USD",
+        "amount":100,
+        "decimals":2
+      },
+      "kind": "Transfer",
+      "fulfilled": "2020-01-01T00:00:00Z"
+    },
+    {
+      "uetr": "UETR2",
+      "sender": "zSenderPublicKey",
+      "recipient": "zRecipientPublicKey",
+      "amount": {
+        "asset_code":"USD",
+        "amount":100,
+        "decimals":2
+      },
+      "kind": "Transfer",
+      "fulfilled": "2020-01-01T00:00:00Z"
+    }
+  ]
+}
+*/
 message ListFulfilledCommitmentsResponse {
   repeated FulfilledCommitment commitments = 1;
 }
