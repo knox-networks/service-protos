@@ -267,6 +267,33 @@ message ListBalanceDetailsResponse {
 /* [Example]
 {
   "page": 0,
+  "page_size": 10000
+}
+*/
+message ListParticipantBalanceRequest {
+  // Page number for pagination. First page is '0'.
+  uint32 page               = 1;
+  // Elements per page for pagination.
+  optional uint32 page_size = 2;
+}
+
+/* [Example]
+{
+  "participant": 1,
+  "total_amount": {
+    "asset_code": "USD",
+    "value": "100.00"
+  }
+}
+*/
+message ListParticipantBalanceResponse {
+  string participant = 1;
+  common.Amount total_amount = 2;
+}
+
+/* [Example]
+{
+  "page": 0,
   "page_size": 10000,
   "verifier": "zWalletPublicKey"
 }
