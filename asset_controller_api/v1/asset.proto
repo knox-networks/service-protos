@@ -287,8 +287,8 @@ message ListParticipantBalanceRequest {
 }
 */
 message ListParticipantBalanceResponse {
-  string participant = 1;
-  common.Amount total_amount = 2;
+  repeated common.ParticipantBalance participant_balances = 1;
+  
 }
 
 /* [Example]
