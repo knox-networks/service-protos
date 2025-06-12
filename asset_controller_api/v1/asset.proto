@@ -696,6 +696,9 @@ service AssetController {
   // Lists more details about balances in a wallet such as how much funds are available vs reserved.
   rpc ListBalanceDetails(ListBalanceDetailsRequest) returns (ListBalanceDetailsResponse);
 
+  // Lists balances of every participant.
+  rpc ListParticipantBalances(ListParticipantBalanceRequest) returns (ListParticipantBalanceResponse);
+
   // Lists the history of all Contracts for a given wallet.
   rpc ListContracts(ListContractsRequest) returns (ListContractsResponse);
 
