@@ -58,6 +58,21 @@ message Amount {
   string value      = 2;
 }
 
+/* [Example]
+{
+  "participant": 1,
+  "total_amount": {
+    "asset_code": "USD",
+    "value": "100.00"
+  }
+}
+*/
+message ParticipantBalance {
+  string participant = 1;
+  // [Amount] Total amount of the asset
+  common.Amount total_amount = 2;
+}
+
 // Used to start an authentication flow
 /* [Example]
 {
