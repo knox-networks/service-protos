@@ -415,139 +415,6 @@ message GetAssetResponse {
 
 /* [Example]
 {
-  "uetr": "UETR",
-  "verifier": "zWalletPublicKey"
-}
-*/
-message GetContractDetailRequest {
-  // A Unique End-to-end Transaction Reference, string of 36 unique characters.
-  string uetr     = 1;
-  // Wallet verifier.
-  string verifier = 2;
-}
-
-/* [Example]
-{
-  "contract_type": "Asset Swap",
-  "commitments": [
-    {
-      "sender": "zSender1PublicKey",
-      "recipient": "zRecipient1PublicKey",
-      "amount": {
-        "asset_code":"USD",
-        "value": "1.00"
-      }
-    },
-    {
-      "sender": "zSender2PublicKey",
-      "recipient": "zRecipient1PublicKey",
-      "amount": {
-        "asset_code":"MXN",
-        "value": "1.00"
-      }
-    }
-  ],
-  "created": "2023-12-19T16:39:56-08:00",
-  "hash_presenter": "zSender1PublicKey",
-  "hash": "d04b98f48e8f8bcc15c6ae5ac050801cd6dcfd428fb5f9e65c4e16e7807340fa",
-  "expiration": "2023-12-19T16:39:57-08:00",
-  "memo": "Currency swap",
-  "log": [
-    {
-      "sender": "zSender1PublicKey",
-      "receiver": "zRecipient1PublicKey",
-      "amount": {
-          "asset_code":"USD",
-          "value": "1.00"
-      },
-      "timestamp": "2006-01-02T15:04:05Z",
-      "kind": "ContractPayment",
-      "state": "Awaiting",
-      "event": "Received promissory",
-      "promissory_id": "00000000-0000-0000-0000-000000000000"
-    }
-  ]
-}
-*/
-message GetContractDetailResponse {
-  /* [Example]
-  {
-    "sender": "zSender1PublicKey",
-    "receiver": "zRecipient1PublicKey",
-    "amount": {
-        "asset_code":"USD",
-        "value": "1.00"
-    },
-    "timestamp": "2006-01-02T15:04:05Z",
-    "kind": "ContractPayment",
-    "state": "Awaiting",
-    "event": "Received promissory",
-    "promissory_id": "00000000-0000-0000-0000-000000000000"
-  }
-  */
-  message LogEntry {
-    // [MultibaseVerifier]
-    string sender        = 1;
-    // [MultibaseVerifier]
-    string receiver      = 2;
-    // [Amount] Promissory amount if it applies
-    common.Amount amount = 3;
-    // [RFC3339 Timestamp] Event time
-    string timestamp     = 4;
-    // State machine this occurred in
-    string kind          = 5;
-    // State in the state machine
-    string state         = 6;
-    // Description of the event
-    string event         = 7;
-    // [UUID] The unique identifier of a promissory if it applies
-    string promissory_id = 8;
-  }
-
-  // Type of this contract
-  string contract_type                   = 1;
-  // Lists all fund transfers specified in the contract
-  repeated common.Commitment commitments = 2;
-
-  // [RFC3339 Timestamp] Time the contract was created
-  string created                         = 4;
-  // [MultibaseVerifier] that is responsible for presenting the secret
-  string hash_presenter                  = 5;
-  // [Sha256 Hash] Hash of the secret
-  bytes hash                             = 6;
-  // [RFC3339 Timestamp] Expiration time of the contract where all funds are returned to all participants
-  string expiration                      = 7;
-  // Human-readable memo field
-  string memo                            = 8;
-  // Log of all interactions of this contract
-  repeated LogEntry log                  = 9;
-}
-
-/* [Example]
-{
-  "uetr": "UETR",
-  "verifier": "zWalletPublicKey"
-}
-*/
-message GetContractTtlRequest {
-  // A Unique End-to-end Transaction Reference, string of 36 unique characters.
-  string uetr     = 1;
-  // Wallet verifier.
-  string verifier = 2;
-}
-
-/* [Example]
-{
-  "contract": "<contents...>"
-}
-*/
-message GetContractTtlResponse {
-  // contract in TTL format
-  string ttl = 1;
-}
-
-/* [Example]
-{
   "text": "CreateContractText",
   "verifier": "zWalletPublicKey"
 }
@@ -583,27 +450,6 @@ message CreateContractResponse {
 
 /* [Example]
 {
-  "ttl": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema# ...>"
-}
-*/
-message ValidateTemplateRequest {
-  // TriG/Turtle string file
-  string ttl = 1;
-}
-
-/* [Example]
-{
-  "nq": "NQ"
-}
-*/
-message ValidateTemplateResponse {
-  // Canonical NQuads response
-  string nq = 1;
-}
-
-/* [Example]
-{
   "verifier": "zWalletPublicKey",
   "uetr": "UETR"
 }
@@ -631,61 +477,6 @@ message GetTransactionStatusResponse {
   optional bytes report    = 3;
 }
 
-/* [Example]
-{
-  "uetr": "UETR",
-  "verifier": "zWalletPublicKey"
-}
-*/
-message GetTransactionLogRequest {
-  // A Unique End-to-end Transaction Reference, string of 36 unique characters.
-  string uetr     = 1;
-  // Wallet verifier.
-  string verifier = 2;
-}
-
-/* [Example]
-{
-  "log": [
-    {
-      "timestamp": "2006-01-02T15:04:05Z",
-      "kind": "ContractPayment",
-      "state": "Awaiting",
-      "event": "Received promissory"
-    },
-    {
-      "timestamp": "2007-01-02T15:04:05Z",
-      "kind": "ContractPayment",
-      "state": "Awaiting",
-      "event": "Received promissory"
-    }
-  ]
-}
-*/
-message GetTransactionLogResponse {
-  /* [Example]
-  {
-    "timestamp": "2006-01-02T15:04:05Z",
-    "kind": "ContractPayment",
-    "state": "Awaiting",
-    "event": "Received promissory"
-  }
-  */
-  message LogEntry {
-    // [RFC3339 Timestamp] Event time
-    string timestamp = 1;
-    // State machine this occurred in
-    string kind      = 2;
-    // State in the state machine
-    string state     = 3;
-    // Description of the event
-    string event     = 4;
-  }
-
-  // Log of all interactions of this contract
-  repeated LogEntry log = 1;
-}
-
 service AssetController {
   // List all of the assets of the specified asset type in a given wallet.
   rpc ListAssets(ListAssetsRequest) returns (ListAssetsResponse);
@@ -705,21 +496,9 @@ service AssetController {
   // Get a specific wallet asset by asset ID.
   rpc GetAsset(GetAssetRequest) returns (GetAssetResponse);
 
-  // Get details of a specific Contract by UETR.
-  rpc GetContractDetail(GetContractDetailRequest) returns (GetContractDetailResponse);
-
-  // Get details of a specific Contract by UETR in RDF 1.1 Turtle format.
-  rpc GetContractTtl(GetContractTtlRequest) returns (GetContractTtlResponse);
-
   // Create a new Contract with detailed specifics defined in RDF 1.1 Turtle format.
   rpc CreateContract(CreateContractRequest) returns (CreateContractResponse);
 
-  // Validate a Contract template in RDF 1.1 Turtle format, producing any errors as a gRPC status.
-  rpc ValidateTemplate(ValidateTemplateRequest) returns (ValidateTemplateResponse);
-
   // Create a new transaction using Contracts 2.0
   rpc GetTransactionStatus(GetTransactionStatusRequest) returns (GetTransactionStatusResponse);
-
-  // Create a logs for a transaction using Contracts 2.0
-  rpc GetTransactionLog(GetTransactionLogRequest) returns (GetTransactionLogResponse);
 }
