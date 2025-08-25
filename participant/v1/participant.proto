@@ -176,6 +176,28 @@ message GetSupplyResponse {
   common.Amount total               = 2;
 }
 
+// Request to sign a contract
+/* [Example}
+{
+  "unsigned_contract": "",
+}
+*/
+message SignContractRequest {
+  // Unsigned contract ttl
+  string unsigned_contract = 1;
+}
+
+// Response of a signed contract
+/* [Example}
+{
+  "signed_contract": "",
+}
+*/
+message SignContractResponse {
+  // Signed contract ttl
+  string signed_contract = 1;
+}
+
 // Transacts and holds digital banknotes. This is a server side wallet solution in lieu of a mobile wallet,
 // hosted by the bank on behalf of the customer who opts in to do so. Can also be used by institutions,
 // e.g. a financial institution vault.
@@ -198,4 +220,7 @@ service Participant {
 
   // Get a list of denomination counts of the digital banknotes held in the Treasury service's vault.
   rpc GetSupply(GetSupplyRequest) returns (GetSupplyResponse);
+
+  // Sign a contract
+  rpc SignContract(SignContractRequest) returns (SignContractResponse);
 }
