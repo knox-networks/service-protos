@@ -371,68 +371,20 @@ message ListContractsResponse {
 
 /* [Example]
 {
-  "id": "9628a2d9-f932-41f0-b2da-b9de3103d945",
-  "verifier": "zWalletPublicKey"
+  "text": "SignedContractText"
 }
 */
-message GetAssetRequest {
-  // UUID of the asset.
-  string id       = 1;
-  // [MultibaseVerifier] Wallet verifier.
-  string verifier = 2;
-}
-
-/* [Example]
-{
-  "asset": {
-    "version": "0.1.0",
-    "id": "ASSET_ID",
-    "currency": "USD",
-    "value": "1.00",
-    "authority": "zAuthorityPublicKeyMultibase58Encoded",
-    "issuer": "zIssuerPublicKeyMultibase58Encoded",
-    "issuance_date": "2006-01-02T15:04:05Z",
-    "block_depth": 3,
-    "authorization_signature": "ByteLengthAuthSignatureVariesByAlgo=",
-    "transfer_signature": "ByteLengthTransferSignatureVariesByAlgo=",
-    "notaries": [
-      {
-        "did": "did:method-name:zDIDMultibase58Encoded",
-        "signature": "ByteLengthSignatureVariesByAlgo="
-      },
-      {
-        "did": "did:method-name:zDIDMultibase58Encoded",
-        "signature": "ByteLengthSignatureVariesByAlgo="
-      }
-    ]
-  }
-}
-*/
-message GetAssetResponse {
-  // Asset object
-  Asset asset = 1;
-}
-
-/* [Example]
-{
-  "text": "CreateContractText",
-  "verifier": "zWalletPublicKey"
-}
-*/
-message CreateContractRequest {
-  // Text for the CreateContract
+message TransactRequest {
+  // Text of the signed contract
   string text     = 1;
-  // Optional verifier
-  string verifier = 2;
 }
 
 /* [Example]
 {
   "status": 1,
-  "uetr": "UETR"
 }
 */
-message CreateContractResponse {
+message TransactResponse {
   // Prepare Margin Swap Status.
   enum Status {
     // Status Unspecified.
@@ -441,11 +393,29 @@ message CreateContractResponse {
     SUCCESS     = 1;
     // Status Unsuccessful.
     FAILURE     = 2;
+    // Status Awaiting Final Approval.
+    AWAITING_FINAL_APPROVAL = 3;
   }
   // Status of the transaction
   Status status = 1;
+}
+
+/* [Example]
+{
+  "uetr": "UETR"
+}
+*/
+message CancelRequest {
   // A Unique End-to-end Transaction Reference, string of 36 unique characters.
-  string uetr   = 2;
+  string uetr     = 2;
+}
+
+/* [Example]
+{
+}
+*/
+message CancelResponse {
+
 }
 
 /* [Example]
@@ -493,11 +463,11 @@ service AssetController {
   // Lists the history of all Contracts for a given wallet.
   rpc ListContracts(ListContractsRequest) returns (ListContractsResponse);
 
-  // Get a specific wallet asset by asset ID.
-  rpc GetAsset(GetAssetRequest) returns (GetAssetResponse);
+  // Start a transaction using the provided signed contract
+  rpc Transact(TransactRequest) returns (TransactResponse);
 
-  // Create a new Contract with detailed specifics defined in RDF 1.1 Turtle format.
-  rpc CreateContract(CreateContractRequest) returns (CreateContractResponse);
+  // Cancel a transaction
+  rpc Cancel(CancelRequest) returns (CancelResponse);
 
   // Create a new transaction using Contracts 2.0
   rpc GetTransactionStatus(GetTransactionStatusRequest) returns (GetTransactionStatusResponse);
