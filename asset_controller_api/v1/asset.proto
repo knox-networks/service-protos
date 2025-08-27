@@ -84,84 +84,6 @@ message Asset {
 
 /* [Example]
 {
-  "asset_type": "BankAssetType",
-  "page": 0,
-  "page_size": 10000,
-  "verifier": "zWalletPublicKey"
-}
-*/
-message ListAssetsRequest {
-  // Type of asset.
-  string asset_type         = 1;
-  // Page number for pagination. First page is '0'.
-  uint32 page               = 2;
-  // Elements per page for pagination.
-  optional uint32 page_size = 3;
-  // [MultibaseVerifier] Wallet verifier.
-  string verifier           = 4;
-}
-
-/* [Example]
-{
-  "assets": [
-    {
-      "version": "0.1.0",
-      "id": "ASSET_ID",
-      "currency": "USD",
-      "value": "10.00",
-      "authority": "zAuthorityPublicKeyMultibase58Encoded",
-      "issuer": "zIssuerPublicKeyMultibase58Encoded",
-      "issuance_date": "2006-01-02T15:04:05Z",
-      "block_depth": 3,
-      "authorization_signature": "ByteLengthAuthSignatureVariesByAlgo=",
-      "transfer_signature": "ByteLengthTransferSignatureVariesByAlgo=",
-      "notaries": [
-        {
-          "did": "did:method-name:zDIDMultibase58Encoded",
-          "signature": "ByteLengthSignatureVariesByAlgo="
-        },
-        {
-          "did": "did:method-name:zDIDMultibase58Encoded",
-          "signature": "ByteLengthSignatureVariesByAlgo="
-        }
-      ]
-    },
-    {
-      "version": "0.1.0",
-      "id": "ASSET_ID",
-      "currency": "USD",
-      "value": "5.00",
-      "authority": "zAuthorityPublicKeyMultibase58Encoded",
-      "issuer": "zIssuerPublicKeyMultibase58Encoded",
-      "issuance_date": "2006-01-02T15:04:05Z",
-      "block_depth": 3,
-      "authorization_signature": "ByteLengthAuthSignatureVariesByAlgo=",
-      "transfer_signature": "ByteLengthTransferSignatureVariesByAlgo=",
-      "notaries": [
-        {
-          "did": "did:method-name:zDIDMultibase58Encoded",
-          "signature": "ByteLengthSignatureVariesByAlgo="
-        },
-        {
-          "did": "did:method-name:zDIDMultibase58Encoded",
-          "signature": "ByteLengthSignatureVariesByAlgo="
-        }
-      ]
-    }
-  ],
-  "total_count": 2
-}
-*/
-message ListAssetsResponse {
-  // List of Assets.
-  repeated Asset assets = 1;
-
-  // Total number of asset files
-  uint32 totalCount     = 2;
-}
-
-/* [Example]
-{
   "verifier": "zWalletPublicKey"
 }
 */
@@ -448,9 +370,6 @@ message GetTransactionStatusResponse {
 }
 
 service AssetController {
-  // List all of the assets of the specified asset type in a given wallet.
-  rpc ListAssets(ListAssetsRequest) returns (ListAssetsResponse);
-
   // List the balances of each asset type in the wallet.
   rpc ListBalances(ListBalancesRequest) returns (ListBalancesResponse);
 
