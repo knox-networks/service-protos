@@ -4,6 +4,7 @@ package participant.v1;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
 import "common/v1/common.proto";
 
 // THIS PROTO FILE IS INTENDED FOR USE FOR KNOX AND KNOX CUSTOMERS.
@@ -110,7 +111,7 @@ message GetNotaryRequest {
 // Responds with the signature of the requested Notary
 /* [Example]
 {
-  "signature": "ByteLengthSignatureVariesByAlgo="
+  "signature": "ByteLengthSignatureVariesByAlgo"
 }
 */
 message GetNotaryResponse {
@@ -198,6 +199,86 @@ message SignContractResponse {
   string signed_contract = 1;
 }
 
+// Request to create an asset
+/* [Example}
+{
+  "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
+  "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
+  "group": "g1",
+  "amount": {
+    "asset_code": "USD",
+    "value": "123.000000"
+  },
+  "created_at": "1970-01-01T00:00:00.00Z"
+}
+*/
+message CreateAssetRequest {
+  //
+  string authority_verifier           = 1;
+  //
+  string recipient_verifier           = 2;
+  //
+  string group                        = 3;
+  //
+  common.Amount amount                = 4;
+  //
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+// Response to create an asset
+/* [Example}
+{
+  "transferred_asset": "ByteLengthTransferredAssetVariesByAlgo"
+}
+*/
+message CreateAssetResponse {
+  // An asset that has been transferred to a new owner, but not yet authorized
+  bytes transferred_asset = 1;
+}
+
+// Request to transfer assets to a new owner
+/* [Example}
+{
+  "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
+  "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
+  "group": "g1",
+  "amount": {
+    "asset_code": "USD",
+    "value": "123.000000"
+  },
+  "created_at": "1970-01-01T00:00:00.00Z"
+}
+*/
+message TransferAssetRequest {
+  // Authorized assets to be transferred
+  repeated bytes authorized_assets    = 1;
+  // Recipient of the transferred assets
+  string recipient_verifier           = 2;
+  // Commitment group
+  string group                        = 3;
+  // Amount to transfer
+  common.Amount amount                = 4;
+  // Timestamp of the transfer
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+// Response to transfer assets
+/* [Example}
+{
+  "transferred": "ByteLengthTransferredVariesByAlgo",
+  "change": "ByteLengthChangeVariesByAlgo",
+  "refund": "ByteLengthRefundVariesByAlgo"
+}
+*/
+message TransferAssetResponse {
+  // Transferred asset
+  bytes transferred = 1;
+  // Change asset
+  bytes change      = 2;
+  // Refund asset
+  bytes refund      = 3;
+}
+
 // Transacts and holds digital banknotes. This is a server side wallet solution in lieu of a mobile wallet,
 // hosted by the bank on behalf of the customer who opts in to do so. Can also be used by institutions,
 // e.g. a financial institution vault.
@@ -213,7 +294,7 @@ service Participant {
 
   // Gets the verifier of the authority wallet.
   rpc GetAuthorityVerifier(common.GetVerifierRequest) returns (common.GetVerifierResponse);
-    // Gets the verifier of the treasury wallet.
+  // Gets the verifier of the treasury wallet.
   rpc GetTreasuryVerifier(common.GetVerifierRequest) returns (common.GetVerifierResponse);
   // Gets the signature of the Notary for this Authority/Notary.
   rpc GetNotary(GetNotaryRequest) returns (GetNotaryResponse);
@@ -223,4 +304,8 @@ service Participant {
 
   // Sign a contract
   rpc SignContract(SignContractRequest) returns (SignContractResponse);
+  // Create an asset
+  rpc CreateAsset(CreateAssetRequest) returns (CreateAssetResponse);
+  // Transfer existing assets over to a new owner
+  rpc TransferAsset(TransferAssetRequest) returns (TransferAssetResponse);
 }
