@@ -271,11 +271,11 @@ message TransferAssetRequest {
 */
 message TransferAssetResponse {
   // Transferred asset
-  bytes transferred = 1;
+  bytes transferred     = 1;
   // Change asset
-  bytes change      = 2;
+  optional bytes change = 2;
   // Refund asset
-  bytes refund      = 3;
+  bytes refund          = 3;
 }
 
 // Transacts and holds digital banknotes. This is a server side wallet solution in lieu of a mobile wallet,
