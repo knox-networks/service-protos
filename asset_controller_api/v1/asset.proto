@@ -342,31 +342,22 @@ message CancelResponse {
 
 /* [Example]
 {
-  "verifier": "zWalletPublicKey",
   "uetr": "UETR"
 }
 */
 message GetTransactionStatusRequest {
-  // Verifier
-  string verifier = 1;
   // A Unique End-to-end Transaction Reference, string of 36 unique characters.
-  string uetr     = 2;
+  string uetr     = 1;
 }
 
 /* [Example]
 {
-  "state": "STATE",
-  "progress": "UETR",
-  "report": "ReportBytes="
+  "status": "STATUS",
 }
 */
 message GetTransactionStatusResponse {
-  // State
-  string state             = 1;
-  // Optional Progress String
-  optional string progress = 2;
-  // Optional Report Bytes
-  optional bytes report    = 3;
+  // Status
+  string status             = 1;
 }
 
 service AssetController {
