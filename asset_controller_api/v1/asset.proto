@@ -360,6 +360,30 @@ message GetTransactionStatusResponse {
   string status             = 1;
 }
 
+/* [Example]
+{
+  "verifier": "zWalletPublicKey",
+  "asset_code": "USD"
+}
+*/
+message GetBalanceRequest {
+  string verifier = 1;
+  string asset_code = 2;
+}
+
+/* [Example]
+{
+  "balance": {
+    "asset_code":"USD",
+    "value": "10.00"
+  },
+}
+*/
+message GetBalanceResponse {
+  // [Amount] Total amount of the asset
+  common.Amount balance = 1;
+}
+
 service AssetController {
   // List the balances of each asset type in the wallet.
   rpc ListBalances(ListBalancesRequest) returns (ListBalancesResponse);
@@ -381,4 +405,7 @@ service AssetController {
 
   // Create a new transaction using Contracts 2.0
   rpc GetTransactionStatus(GetTransactionStatusRequest) returns (GetTransactionStatusResponse);
+
+  // Get the balance of a participant
+  rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse);
 }
