@@ -308,18 +308,18 @@ message TransactRequest {
 */
 message TransactResponse {
   // Prepare Margin Swap Status.
-  enum Status {
-    // Status Unspecified.
-    UNSPECIFIED = 0;
-    // Status Successful.
-    SUCCESS     = 1;
-    // Status Unsuccessful.
-    FAILURE     = 2;
-    // Status Awaiting Final Approval.
-    AWAITING_FINAL_APPROVAL = 3;
-  }
-  // Status of the transaction
-  Status status = 1;
+//  enum Status {
+//    // Status Unspecified.
+//    UNSPECIFIED = 0;
+//    // Status Successful.
+//    SUCCESS     = 1;
+//    // Status Unsuccessful.
+//    FAILURE     = 2;
+//    // Status Awaiting Final Approval.
+//    AWAITING_FINAL_APPROVAL = 3;
+//  }
+//  // Status of the transaction
+//  Status status = 1;
 }
 
 /* [Example]
