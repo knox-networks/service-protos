@@ -119,75 +119,6 @@ message ListBalancesResponse {
 
 /* [Example]
 {
-  "verifier": "zWalletPublicKey"
-}
-*/
-message ListBalanceDetailsRequest {
-
-  // Wallet verifier.
-  string verifier = 1;
-}
-
-/* [Example]
-{
-  "balances": [
-    {
-      "balance": {
-        "amount": {
-          "asset_code": "USD",
-          "value": "57.00"
-        },
-        "file_count": 57
-      },
-      "kind": 0
-    },
-    {
-      "balance": {
-        "amount": {
-          "asset_code": "EUR",
-          "value": "57.00"
-        },
-        "file_count": 57
-      },
-      "kind": 0
-    }
-  ]
-}
-*/
-message ListBalanceDetailsResponse {
-  /* [Example]
-  {
-    "balance": {
-      "amount": {
-        "asset_code": "USD",
-        "value": "57.00"
-      },
-      "file_count": 57
-    },
-    "kind": 0
-  }
-  */
-  message BalanceDetail {
-
-    // Balance Type.
-    enum Kind {
-      // Indicates a balance that is available to be transferred
-      KIND_AVAILABLE = 0;
-      // Indicates a balance that has been earmarked to be transferred
-      KIND_RESERVED  = 1;
-    }
-    // Sum of a particular currency in the wallet
-    WalletBalance balance = 1;
-    // Classification of the balance
-    Kind kind             = 2;
-  }
-
-  // List of Balance Details
-  repeated BalanceDetail balances = 1;
-}
-
-/* [Example]
-{
   "page": 0,
   "page_size": 10000
 }
@@ -215,84 +146,6 @@ message ListParticipantBalanceResponse {
 
 /* [Example]
 {
-  "page": 0,
-  "page_size": 10000,
-  "verifier": "zWalletPublicKey"
-}
-*/
-message ListContractsRequest {
-  // Page number for pagination. First page is '0'.
-  int32 page      = 1;
-  // Elements per page for pagination.
-  int32 page_size = 2;
-  // Wallet verifier.
-  string verifier = 3;
-}
-
-/* [Example]
-{
-  "contracts": [
-    {
-      "contract_id": "9628a2d9-f932-41f0-b2da-b9de3103d945",
-      "contract_type": "Swap",
-      "created": "2022-12-19T16:39:57-08:00",
-      "counterparties": [
-        "zCounterpartyPublicKeyMultibase58Encoded",
-        "zCounterpartyPublicKeyMultibase58Encoded2"
-      ],
-      "status": 1
-    },
-    {
-      "contract_id": "9628a2d9-f932-41f0-b2da-b9de3103d945",
-      "contract_type": "Swap",
-      "created": "2022-12-19T16:39:57-08:00",
-      "counterparties": [
-        "zCounterpartyPublicKeyMultibase58Encoded",
-        "zCounterpartyPublicKeyMultibase58Encoded2"
-      ],
-      "status": 1
-    }
-  ],
-  "totalCount": 2
-}
-*/
-message ListContractsResponse {
-  /* [Example]
-  {
-    "contract_id": "9628a2d9-f932-41f0-b2da-b9de3103d945",
-    "contract_type": "Swap",
-    "created": "2022-12-19T16:39:57-08:00",
-    "counterparties": [
-      "zCounterpartyPublicKeyMultibase58Encoded",
-      "zCounterpartyPublicKeyMultibase58Encoded2"
-    ],
-    "status": 1
-  }
-  */
-  message ContractSummary {
-    // UUID of the contract
-    string contract_id             = 1;
-    // Type of the contract
-    string contract_type           = 2;
-    // RFC3339 timestamp of the contract creation date.
-    string created                 = 3;
-    // List of participant public keys excluding self
-    repeated string counterparties = 4;
-    // Current status of contract
-    string status                  = 5;
-    // Contract memo
-    string memo                    = 6;
-  }
-
-  // List of contracts with status metadata
-  repeated ContractSummary contracts = 1;
-
-  // Total number of contracts
-  uint32 totalCount                  = 2;
-}
-
-/* [Example]
-{
   "text": "SignedContractText"
 }
 */
@@ -303,23 +156,10 @@ message TransactRequest {
 
 /* [Example]
 {
-  "status": 1,
 }
 */
 message TransactResponse {
-  // Prepare Margin Swap Status.
-//  enum Status {
-//    // Status Unspecified.
-//    UNSPECIFIED = 0;
-//    // Status Successful.
-//    SUCCESS     = 1;
-//    // Status Unsuccessful.
-//    FAILURE     = 2;
-//    // Status Awaiting Final Approval.
-//    AWAITING_FINAL_APPROVAL = 3;
-//  }
-//  // Status of the transaction
-//  Status status = 1;
+
 }
 
 /* [Example]
@@ -388,14 +228,8 @@ service AssetController {
   // List the balances of each asset type in the wallet.
   rpc ListBalances(ListBalancesRequest) returns (ListBalancesResponse);
 
-  // Lists more details about balances in a wallet such as how much funds are available vs reserved.
-  rpc ListBalanceDetails(ListBalanceDetailsRequest) returns (ListBalanceDetailsResponse);
-
   // Lists balances of every participant.
   rpc ListParticipantBalances(ListParticipantBalanceRequest) returns (ListParticipantBalanceResponse);
-
-  // Lists the history of all Contracts for a given wallet.
-  rpc ListContracts(ListContractsRequest) returns (ListContractsResponse);
 
   // Start a transaction using the provided signed contract
   rpc Transact(TransactRequest) returns (TransactResponse);
