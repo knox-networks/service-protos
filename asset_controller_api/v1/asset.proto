@@ -7,22 +7,6 @@ import "common/v1/packet.proto";
 
 /* [Example]
 {
-  "amount": {
-    "asset_code": "USD",
-    "value": "57.00"
-  },
-  "file_count": 57
-}
-*/
-message WalletBalance {
-  // Amount in Wallet
-  common.Amount amount = 1;
-  // Number of Files in Wallet
-  int64 file_count     = 2;
-}
-
-/* [Example]
-{
   "did": "DID_NOTARY",
   "signature": "ByteLengthAuthSignatureVariesByAlgo="
 }
@@ -96,25 +80,19 @@ message ListBalancesRequest {
 {
   "balances": [
     {
-      "amount": {
-        "asset_code": "USD",
-        "value": "57.00"
-      },
-      "file_count": 57
+      "asset_code": "USD",
+      "value": "57.00"
     },
     {
-      "amount": {
-        "asset_code": "EUR",
-        "value": "57.00"
-      },
-      "file_count": 57
+      "asset_code": "EUR",
+      "value": "57.00"
     }
   ]
 }
 */
 message ListBalancesResponse {
   // List of Wallet Balances by Asset Type
-  repeated WalletBalance balances = 1;
+  repeated common.Amount balances = 1;
 }
 
 /* [Example]
