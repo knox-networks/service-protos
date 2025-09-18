@@ -110,70 +110,12 @@ message GetNotaryRequest {
 // Responds with the signature of the requested Notary
 /* [Example]
 {
-  "signature": "ByteLengthSignatureVariesByAlgo="
+  "signature": "ByteLengthSignatureVariesByAlgo"
 }
 */
 message GetNotaryResponse {
   // The signature of the Notary created by signing the Notary Public key with the Authority keypair
   bytes signature = 1;
-}
-
-// Requests the count of files of various denominations for a given currency.
-/* [Example]
-{
-  "asset_code": "USD"
-}
-*/
-message GetSupplyRequest {
-  // The currency code of the requested supply.
-  string asset_code = 1;
-  // [MultibaseVerifier] Treasury verifier.
-  string verifier   = 2;
-}
-
-// Lists the count of the files of specific denominations held in the Treasury service's vault, and the total value held
-// in files of that denomination.
-/* [Example]
-{
-  "denomination": {
-    "asset_code":"USD",
-    "amount":2000,
-    "decimals":2
-  },
-  "count": 5,
-  "total": {
-    "asset_code":"USD",
-    "amount":10000,
-    "decimals":2
-  }
-}
-*/
-message DenominationCount {
-  // The amount of the denomination.
-  common.Amount denomination = 1;
-  // The number of digital banknotes of this amount held in supply.
-  uint32 count               = 2;
-  // The total value represented by digital banknotes of this denomination.
-  common.Amount total        = 3;
-}
-
-// Provides a list of file denominations in the Treasury service's Vault.
-/* [Example]
-{
-  "total": {
-    "asset_code": "USD",
-    "amount": 15000,
-    "decimals": 2
-  }
-}
-*/
-message GetSupplyResponse {
-  // A list of denomination counts of the digital banknotes held in supply.
-  reserved 1;
-  reserved "supply";
-
-  // grand total sum of all promissories
-  common.Amount total               = 2;
 }
 
 // Request to sign a contract
@@ -198,6 +140,86 @@ message SignContractResponse {
   string signed_contract = 1;
 }
 
+// Request to create an asset
+/* [Example}
+{
+  "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
+  "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
+  "group": "g1",
+  "amount": {
+    "asset_code": "USD",
+    "value": "123.000000"
+  },
+  "created_at": "1970-01-01T00:00:00.00Z"
+}
+*/
+message CreateAssetRequest {
+  // Authority that creates the asset
+  string authority_verifier           = 1;
+  // Recipient of the created asset
+  string recipient_verifier           = 2;
+  // Group
+  string group                        = 3;
+  // Amount
+  common.Amount amount                = 4;
+  // Timestamp
+  string timestamp                    = 5;
+}
+
+// Response to create an asset
+/* [Example}
+{
+  "transferred_asset": "ByteLengthTransferredAssetVariesByAlgo"
+}
+*/
+message CreateAssetResponse {
+  // An asset that has been transferred to a new owner, but not yet authorized
+  bytes transferred_asset = 1;
+}
+
+// Request to transfer assets to a new owner
+/* [Example}
+{
+  "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
+  "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
+  "group": "g1",
+  "amount": {
+    "asset_code": "USD",
+    "value": "123.000000"
+  },
+  "created_at": "1970-01-01T00:00:00.00Z"
+}
+*/
+message TransferAssetRequest {
+  // Authorized assets to be transferred
+  repeated bytes authorized_assets    = 1;
+  // Recipient of the transferred assets
+  string recipient_verifier           = 2;
+  // Commitment group
+  string group                        = 3;
+  // Amount to transfer
+  common.Amount amount                = 4;
+  // Timestamp of the transfer
+  string timestamp                    = 5;
+}
+
+// Response to transfer assets
+/* [Example}
+{
+  "transferred": "ByteLengthTransferredVariesByAlgo",
+  "change": "ByteLengthChangeVariesByAlgo",
+  "refund": "ByteLengthRefundVariesByAlgo"
+}
+*/
+message TransferAssetResponse {
+  // Transferred asset
+  bytes transferred     = 1;
+  // Change asset
+  optional bytes change = 2;
+  // Refund asset
+  bytes refund          = 3;
+}
+
 // Transacts and holds digital banknotes. This is a server side wallet solution in lieu of a mobile wallet,
 // hosted by the bank on behalf of the customer who opts in to do so. Can also be used by institutions,
 // e.g. a financial institution vault.
@@ -213,14 +235,15 @@ service Participant {
 
   // Gets the verifier of the authority wallet.
   rpc GetAuthorityVerifier(common.GetVerifierRequest) returns (common.GetVerifierResponse);
-    // Gets the verifier of the treasury wallet.
+  // Gets the verifier of the treasury wallet.
   rpc GetTreasuryVerifier(common.GetVerifierRequest) returns (common.GetVerifierResponse);
   // Gets the signature of the Notary for this Authority/Notary.
   rpc GetNotary(GetNotaryRequest) returns (GetNotaryResponse);
 
-  // Get a list of denomination counts of the digital banknotes held in the Treasury service's vault.
-  rpc GetSupply(GetSupplyRequest) returns (GetSupplyResponse);
-
   // Sign a contract
   rpc SignContract(SignContractRequest) returns (SignContractResponse);
+  // Create an asset
+  rpc CreateAsset(CreateAssetRequest) returns (CreateAssetResponse);
+  // Transfer existing assets over to a new owner
+  rpc TransferAsset(TransferAssetRequest) returns (TransferAssetResponse);
 }
