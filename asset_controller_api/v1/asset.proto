@@ -145,24 +145,6 @@ message TransactResponse {
   "uetr": "UETR"
 }
 */
-message CancelRequest {
-  // A Unique End-to-end Transaction Reference, string of 36 unique characters.
-  string uetr     = 2;
-}
-
-/* [Example]
-{
-}
-*/
-message CancelResponse {
-
-}
-
-/* [Example]
-{
-  "uetr": "UETR"
-}
-*/
 message GetTransactionStatusRequest {
   // A Unique End-to-end Transaction Reference, string of 36 unique characters.
   string uetr     = 1;
@@ -211,9 +193,6 @@ service AssetController {
 
   // Start a transaction using the provided signed contract
   rpc Transact(TransactRequest) returns (TransactResponse);
-
-  // Cancel a transaction
-  rpc Cancel(CancelRequest) returns (CancelResponse);
 
   // Create a new transaction using Contracts 2.0
   rpc GetTransactionStatus(GetTransactionStatusRequest) returns (GetTransactionStatusResponse);
