@@ -118,64 +118,6 @@ message GetNotaryResponse {
   bytes signature = 1;
 }
 
-// Requests the count of files of various denominations for a given currency.
-/* [Example]
-{
-  "asset_code": "USD"
-}
-*/
-message GetSupplyRequest {
-  // The currency code of the requested supply.
-  string asset_code = 1;
-  // [MultibaseVerifier] Treasury verifier.
-  string verifier   = 2;
-}
-
-// Lists the count of the files of specific denominations held in the Treasury service's vault, and the total value held
-// in files of that denomination.
-/* [Example]
-{
-  "denomination": {
-    "asset_code":"USD",
-    "amount":2000,
-    "decimals":2
-  },
-  "count": 5,
-  "total": {
-    "asset_code":"USD",
-    "amount":10000,
-    "decimals":2
-  }
-}
-*/
-message DenominationCount {
-  // The amount of the denomination.
-  common.Amount denomination = 1;
-  // The number of digital banknotes of this amount held in supply.
-  uint32 count               = 2;
-  // The total value represented by digital banknotes of this denomination.
-  common.Amount total        = 3;
-}
-
-// Provides a list of file denominations in the Treasury service's Vault.
-/* [Example]
-{
-  "total": {
-    "asset_code": "USD",
-    "amount": 15000,
-    "decimals": 2
-  }
-}
-*/
-message GetSupplyResponse {
-  // A list of denomination counts of the digital banknotes held in supply.
-  reserved 1;
-  reserved "supply";
-
-  // grand total sum of all promissories
-  common.Amount total               = 2;
-}
-
 // Request to sign a contract
 /* [Example}
 {
@@ -297,9 +239,6 @@ service Participant {
   rpc GetTreasuryVerifier(common.GetVerifierRequest) returns (common.GetVerifierResponse);
   // Gets the signature of the Notary for this Authority/Notary.
   rpc GetNotary(GetNotaryRequest) returns (GetNotaryResponse);
-
-  // Get a list of denomination counts of the digital banknotes held in the Treasury service's vault.
-  rpc GetSupply(GetSupplyRequest) returns (GetSupplyResponse);
 
   // Sign a contract
   rpc SignContract(SignContractRequest) returns (SignContractResponse);
