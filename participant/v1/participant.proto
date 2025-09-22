@@ -173,7 +173,7 @@ message CreateAssetRequest {
 }
 */
 message CreateAssetResponse {
-  // An asset that has been transferred to a new owner, but not yet authorized
+  // An asset that has been created into existence by an Authority, but not yet authorized.
   bytes transferred_asset = 1;
 }
 
