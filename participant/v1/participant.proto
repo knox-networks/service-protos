@@ -119,7 +119,7 @@ message GetNotaryResponse {
 }
 
 // Request to sign a contract
-/* [Example}
+/* [Example]
 {
   "unsigned_contract": "",
 }
@@ -130,7 +130,7 @@ message SignContractRequest {
 }
 
 // Response of a signed contract
-/* [Example}
+/* [Example]
 {
   "signed_contract": "",
 }
@@ -141,7 +141,7 @@ message SignContractResponse {
 }
 
 // Request to create an asset
-/* [Example}
+/* [Example]
 {
   "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
   "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
@@ -167,7 +167,7 @@ message CreateAssetRequest {
 }
 
 // Response to create an asset
-/* [Example}
+/* [Example]
 {
   "transferred_asset": "ByteLengthTransferredAssetVariesByAlgo"
 }
@@ -178,7 +178,7 @@ message CreateAssetResponse {
 }
 
 // Request to transfer assets to a new owner
-/* [Example}
+/* [Example]
 {
   "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
   "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
@@ -204,7 +204,7 @@ message TransferAssetRequest {
 }
 
 // Response to transfer assets
-/* [Example}
+/* [Example]
 {
   "transferred": "ByteLengthTransferredVariesByAlgo",
   "change": "ByteLengthChangeVariesByAlgo",
