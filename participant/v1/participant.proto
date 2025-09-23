@@ -133,11 +133,14 @@ message SignContractRequest {
 /* [Example]
 {
   "signed_contract": "",
+  "uetr": "UETR"
 }
 */
 message SignContractResponse {
   // Signed contract ttl
   string signed_contract = 1;
+  // A Unique End-to-end Transaction Reference, string of 36 unique characters.
+  string uetr            = 2;
 }
 
 // Request to create an asset
