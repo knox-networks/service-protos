@@ -156,8 +156,16 @@ message GetTransactionStatusRequest {
 }
 */
 message GetTransactionStatusResponse {
+  enum Status {
+    // Status Initiated.
+    INITIATED   = 0;
+    // Status Successful.
+    SUCCESS     = 1;
+    // Status Unsuccessful.
+    FAILURE     = 2;
+  }
   // Status
-  string status             = 1;
+  Status status = 1;
 }
 
 /* [Example]
