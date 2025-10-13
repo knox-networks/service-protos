@@ -172,12 +172,12 @@ message CreateAssetRequest {
 // Response to create an asset
 /* [Example]
 {
-  "transferred_asset": "ByteLengthTransferredAssetVariesByAlgo"
+  "transferred": "ByteLengthTransferredAssetVariesByAlgo"
 }
 */
 message CreateAssetResponse {
   // An asset that has been created into existence by an Authority, but not yet authorized.
-  bytes transferred_asset = 1;
+  bytes transferred = 1;
 }
 
 // Request to transfer assets to a new owner
@@ -265,7 +265,7 @@ message CreateAndTransferAssetsRequest {
 {
   "create_results": [
     {
-      "transferred_asset": "ByteLengthTransferredAssetVariesByAlgo"
+      "transferred": "ByteLengthTransferredAssetVariesByAlgo"
     }
   ],
   "transfer_results": [
