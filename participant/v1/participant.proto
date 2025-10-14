@@ -172,12 +172,12 @@ message CreateAssetRequest {
 // Response to create an asset
 /* [Example]
 {
-  "transferred_asset": "ByteLengthTransferredAssetVariesByAlgo"
+  "transferred": "ByteLengthTransferredAssetVariesByAlgo"
 }
 */
 message CreateAssetResponse {
   // An asset that has been created into existence by an Authority, but not yet authorized.
-  bytes transferred_asset = 1;
+  bytes transferred = 1;
 }
 
 // Request to transfer assets to a new owner
@@ -223,6 +223,68 @@ message TransferAssetResponse {
   bytes refund          = 3;
 }
 
+// Request to create and/or transfer assets in a single operation
+/* [Example]
+{
+  "creates": [
+    {
+      "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
+      "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
+      "group": "g1",
+      "amount": {
+        "asset_code": "USD",
+        "value": "123.000000"
+      },
+      "timestamp": "1970-01-01T00:00:00.00Z"
+    }
+  ],
+  "transfers": [
+    {
+      "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
+      "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
+      "group": "g1",
+      "amount": {
+        "asset_code": "USD",
+        "value": "50.000000"
+      },
+      "timestamp": "1970-01-01T00:00:00.00Z"
+    }
+  ]
+}
+*/
+message CreateAndTransferAssetsRequest {
+  // Optional list of assets to create (mint)
+  repeated CreateAssetRequest creates = 1;
+
+  // Optional list of assets to transfer
+  repeated TransferAssetRequest transfers = 2;
+}
+
+// Response for combined create/transfer operation
+/* [Example]
+{
+  "create_results": [
+    {
+      "transferred": "ByteLengthTransferredAssetVariesByAlgo"
+    }
+  ],
+  "transfer_results": [
+    {
+      "transferred": "ByteLengthTransferredVariesByAlgo",
+      "change": "ByteLengthChangeVariesByAlgo",
+      "refund": "ByteLengthRefundVariesByAlgo"
+    }
+  ]
+}
+*/
+message CreateAndTransferAssetsResponse {
+  // Results from the create operations
+  repeated CreateAssetResponse create_results = 1;
+
+  // Results from the transfer operations
+  repeated TransferAssetResponse transfer_results = 2;
+}
+
 // Transacts and holds digital banknotes. This is a server side wallet solution in lieu of a mobile wallet,
 // hosted by the bank on behalf of the customer who opts in to do so. Can also be used by institutions,
 // e.g. a financial institution vault.
@@ -249,4 +311,6 @@ service Participant {
   rpc CreateAsset(CreateAssetRequest) returns (CreateAssetResponse);
   // Transfer existing assets over to a new owner
   rpc TransferAsset(TransferAssetRequest) returns (TransferAssetResponse);
+  // Create and transfer assets
+  rpc CreateAndTransferAssets(CreateAndTransferAssetsRequest) returns (CreateAndTransferAssetsResponse);
 }
