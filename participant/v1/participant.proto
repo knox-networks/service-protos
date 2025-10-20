@@ -143,6 +143,31 @@ message SignContractResponse {
   string uetr            = 2;
 }
 
+// Request to sign a contract
+/* [Example]
+{
+  "unsigned_contract": "",
+}
+*/
+message SignContractV2Request {
+  // Unsigned contract JSON
+  string unsigned_contract = 1;
+}
+
+// Response of a signed contract
+/* [Example]
+{
+  "signed_contract": "",
+  "uetr": "UETR"
+}
+*/
+message SignContractV2Response {
+  // Signed contract JSON
+  string signed_contract = 1;
+  // A Unique End-to-end Transaction Reference, string of 36 unique characters.
+  string uetr            = 2;
+}
+
 // Request to create an asset
 /* [Example]
 {
@@ -307,6 +332,7 @@ service Participant {
 
   // Sign a contract
   rpc SignContract(SignContractRequest) returns (SignContractResponse);
+  rpc SignContractV2(SignContractV2Request) returns (SignContractV2Response);
   // Create an asset
   rpc CreateAsset(CreateAssetRequest) returns (CreateAssetResponse);
   // Transfer existing assets over to a new owner
