@@ -204,6 +204,9 @@ service AssetController {
   // Start a transaction using the provided signed contract
   rpc Transact(TransactRequest) returns (TransactResponse);
 
+  // Start a transaction using the provided signed contract data
+  rpc TransactV2(TransactRequest) returns (TransactResponse);
+
   // Create a new transaction using Contracts 2.0
   rpc GetTransactionStatus(GetTransactionStatusRequest) returns (GetTransactionStatusResponse);
 
