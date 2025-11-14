@@ -232,27 +232,26 @@ message TransferAssetCommitment {
 /* [Example]
 {
   "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
-  "timestamp": "1970-01-01T00:00:00.00Z",
-  "commitments": [
-    {
-      "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
-      "sender_verifier": "SenderVerifierLengthVariesByAlgo",
-      "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
-      "amount": {
-        "asset_code": "USD",
-        "value": "123.000000"
-      }
-    }
-  ]
+  "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
+  "group": "g1",
+  "amount": {
+    "asset_code": "USD",
+    "value": "123.000000"
+  },
+  "created_at": "1970-01-01T00:00:00.00Z"
 }
 */
 message TransferAssetRequest {
   // Authorized assets to be transferred
-  repeated bytes authorized_assets             = 1;
+  repeated bytes authorized_assets    = 1;
+  // Recipient of the transferred assets
+  string recipient_verifier           = 2;
+  // Commitment group
+  string group                        = 3;
+  // Amount to transfer
+  common.Amount amount                = 4;
   // Timestamp of the transfer
-  string timestamp                             = 2;
-  // Commitments to transfer
-  repeated TransferAssetCommitment commitments = 3;
+  string timestamp                    = 5;
 }
 
 // Response to transfer assets
@@ -270,6 +269,33 @@ message TransferAssetResponse {
   optional bytes change = 2;
   // Refund asset
   bytes refund          = 3;
+}
+
+// Request to transfer assets to a new owner
+/* [Example]
+{
+  "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
+  "timestamp": "1970-01-01T00:00:00.00Z",
+  "commitments": [
+    {
+      "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
+      "sender_verifier": "SenderVerifierLengthVariesByAlgo",
+      "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
+      "amount": {
+        "asset_code": "USD",
+        "value": "123.000000"
+      }
+    }
+  ]
+}
+*/
+message TransferManyAssetRequest {
+  // Authorized assets to be transferred
+  repeated bytes authorized_assets             = 1;
+  // Timestamp of the transfer
+  string timestamp                             = 2;
+  // Commitments to transfer
+  repeated TransferAssetCommitment commitments = 3;
 }
 
 // Request to create and/or transfer assets in a single operation
@@ -309,7 +335,7 @@ message CreateAndTransferAssetsRequest {
   repeated CreateAssetRequest creates = 1;
 
   // Optional list of assets to transfer
-  TransferAssetRequest transfer = 2;
+  TransferManyAssetRequest transfer = 2;
 }
 
 // Response for combined create/transfer operation
