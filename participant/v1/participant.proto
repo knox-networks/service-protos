@@ -298,6 +298,22 @@ message TransferManyAssetRequest {
   repeated TransferAssetCommitment commitments = 3;
 }
 
+/* [Example]
+{
+  "transferred": [
+    "ByteLengthTransferredVariesByAlgo",
+    "ByteLengthTransferredVariesByAlgo"
+  ],
+  "change": "ByteLengthChangeVariesByAlgo"
+}
+*/
+message TransferManyAssetResponse {
+  // Transferred asset
+  repeated bytes transferred     = 1;
+  // Change asset
+  optional bytes change          = 2;
+}
+
 // Request to create and/or transfer assets in a single operation
 /* [Example]
 {
@@ -344,23 +360,33 @@ message CreateAndTransferAssetsRequest {
   "create_results": [
     {
       "transferred": "ByteLengthTransferredAssetVariesByAlgo"
+    },
+    {
+      "transferred": "ByteLengthTransferredAssetVariesByAlgo"
     }
   ],
   "transfer_results": [
     {
-      "transferred": "ByteLengthTransferredVariesByAlgo",
-      "change": "ByteLengthChangeVariesByAlgo",
-      "refund": "ByteLengthRefundVariesByAlgo"
+      "transferred": [
+        "ByteLengthTransferredVariesByAlgo",
+        "ByteLengthTransferredVariesByAlgo"
+      ],
+      "change": "ByteLengthChangeVariesByAlgo"
+    },
+    {
+      "transferred": [
+        "ByteLengthTransferredVariesByAlgo"
+      ]
     }
   ]
 }
 */
 message CreateAndTransferAssetsResponse {
   // Results from the create operations
-  repeated CreateAssetResponse create_results = 1;
+  repeated CreateAssetResponse create_results         = 1;
 
   // Results from the transfer operations
-  repeated TransferAssetResponse transfer_results = 2;
+  repeated TransferManyAssetResponse transfer_results = 2;
 }
 
 // Transacts and holds digital banknotes. This is a server side wallet solution in lieu of a mobile wallet,
