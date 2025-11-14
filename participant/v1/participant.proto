@@ -208,21 +208,24 @@ message CreateAssetResponse {
 // Request to transfer assets to a new owner
 /* [Example]
 {
-  "sender_verifier": "RecipientVerifierLengthVariesByAlgo",
+  "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
+  "sender_verifier": "SenderVerifierLengthVariesByAlgo",
   "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
   "amount": {
     "asset_code": "USD",
     "value": "123.000000"
-  },
+  }
 }
 */
 message TransferAssetCommitment {
+  // Authority for the sender and recipient
+  string authority_verifier = 1;
   // Recipient of the transferred amount
-  string sender_verifier    = 1;
+  string sender_verifier    = 2;
   // Sender of the transferred amount
-  string recipient_verifier = 2;
+  string recipient_verifier = 3;
   // Amount to transfer
-  common.Amount amount      = 3;
+  common.Amount amount      = 4;
 }
 
 // Request to transfer assets to a new owner
@@ -232,6 +235,7 @@ message TransferAssetCommitment {
   "timestamp": "1970-01-01T00:00:00.00Z",
   "commitments": [
     {
+      "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
       "sender_verifier": "SenderVerifierLengthVariesByAlgo",
       "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
       "amount": {
@@ -288,6 +292,7 @@ message TransferAssetResponse {
     "timestamp": "1970-01-01T00:00:00.00Z",
     "commitments": [
       {
+        "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
         "sender_verifier": "SenderVerifierLengthVariesByAlgo",
         "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
         "amount": {
