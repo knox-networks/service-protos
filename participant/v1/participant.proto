@@ -208,27 +208,47 @@ message CreateAssetResponse {
 // Request to transfer assets to a new owner
 /* [Example]
 {
-  "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
+  "sender_verifier": "RecipientVerifierLengthVariesByAlgo",
   "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
-  "group": "g1",
   "amount": {
     "asset_code": "USD",
     "value": "123.000000"
   },
-  "created_at": "1970-01-01T00:00:00.00Z"
+}
+*/
+message TransferAssetCommitment {
+  // Recipient of the transferred amount
+  string sender_verifier    = 1;
+  // Sender of the transferred amount
+  string recipient_verifier = 2;
+  // Amount to transfer
+  common.Amount amount      = 3;
+}
+
+// Request to transfer assets to a new owner
+/* [Example]
+{
+  "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
+  "timestamp": "1970-01-01T00:00:00.00Z",
+  "commitments": [
+    {
+      "sender_verifier": "SenderVerifierLengthVariesByAlgo",
+      "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
+      "amount": {
+        "asset_code": "USD",
+        "value": "123.000000"
+      }
+    }
+  ]
 }
 */
 message TransferAssetRequest {
   // Authorized assets to be transferred
-  repeated bytes authorized_assets    = 1;
-  // Recipient of the transferred assets
-  string recipient_verifier           = 2;
-  // Commitment group
-  string group                        = 3;
-  // Amount to transfer
-  common.Amount amount                = 4;
+  repeated bytes authorized_assets             = 1;
   // Timestamp of the transfer
-  string timestamp                    = 5;
+  string timestamp                             = 2;
+  // Commitments to transfer
+  repeated TransferAssetCommitment commitments = 3;
 }
 
 // Response to transfer assets
