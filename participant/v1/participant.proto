@@ -283,18 +283,20 @@ message TransferAssetResponse {
       "timestamp": "1970-01-01T00:00:00.00Z"
     }
   ],
-  "transfers": [
-    {
-      "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
-      "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
-      "group": "g1",
-      "amount": {
-        "asset_code": "USD",
-        "value": "50.000000"
-      },
-      "timestamp": "1970-01-01T00:00:00.00Z"
-    }
-  ]
+  "transfer": {
+    "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
+    "timestamp": "1970-01-01T00:00:00.00Z",
+    "commitments": [
+      {
+        "sender_verifier": "SenderVerifierLengthVariesByAlgo",
+        "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
+        "amount": {
+          "asset_code": "USD",
+          "value": "50.000000"
+        }
+      }
+    ]
+  }
 }
 */
 message CreateAndTransferAssetsRequest {
@@ -302,7 +304,7 @@ message CreateAndTransferAssetsRequest {
   repeated CreateAssetRequest creates = 1;
 
   // Optional list of assets to transfer
-  repeated TransferAssetRequest transfers = 2;
+  TransferAssetRequest transfer = 2;
 }
 
 // Response for combined create/transfer operation
