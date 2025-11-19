@@ -208,6 +208,29 @@ message CreateAssetResponse {
 // Request to transfer assets to a new owner
 /* [Example]
 {
+  "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
+  "sender_verifier": "SenderVerifierLengthVariesByAlgo",
+  "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
+  "amount": {
+    "asset_code": "USD",
+    "value": "123.000000"
+  }
+}
+*/
+message TransferAssetCommitment {
+  // Authority for the sender and recipient
+  string authority_verifier = 1;
+  // Recipient of the transferred amount
+  string sender_verifier    = 2;
+  // Sender of the transferred amount
+  string recipient_verifier = 3;
+  // Amount to transfer
+  common.Amount amount      = 4;
+}
+
+// Request to transfer assets to a new owner
+/* [Example]
+{
   "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
   "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
   "group": "g1",
@@ -248,6 +271,49 @@ message TransferAssetResponse {
   bytes refund          = 3;
 }
 
+// Request to transfer assets to a new owner
+/* [Example]
+{
+  "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
+  "timestamp": "1970-01-01T00:00:00.00Z",
+  "commitments": [
+    {
+      "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
+      "sender_verifier": "SenderVerifierLengthVariesByAlgo",
+      "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
+      "amount": {
+        "asset_code": "USD",
+        "value": "123.000000"
+      }
+    }
+  ]
+}
+*/
+message TransferManyAssetRequest {
+  // Authorized assets to be transferred
+  repeated bytes authorized_assets             = 1;
+  // Timestamp of the transfer
+  string timestamp                             = 2;
+  // Commitments to transfer
+  repeated TransferAssetCommitment commitments = 3;
+}
+
+/* [Example]
+{
+  "transferred": [
+    "ByteLengthTransferredVariesByAlgo",
+    "ByteLengthTransferredVariesByAlgo"
+  ],
+  "change": "ByteLengthChangeVariesByAlgo"
+}
+*/
+message TransferManyAssetResponse {
+  // Transferred asset
+  repeated bytes transferred     = 1;
+  // Change asset
+  optional bytes change          = 2;
+}
+
 // Request to create and/or transfer assets in a single operation
 /* [Example]
 {
@@ -266,13 +332,18 @@ message TransferAssetResponse {
   "transfers": [
     {
       "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
-      "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
-      "group": "g1",
-      "amount": {
-        "asset_code": "USD",
-        "value": "50.000000"
-      },
-      "timestamp": "1970-01-01T00:00:00.00Z"
+      "timestamp": "1970-01-01T00:00:00.00Z",
+      "commitments": [
+        {
+          "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
+          "sender_verifier": "SenderVerifierLengthVariesByAlgo",
+          "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
+          "amount": {
+            "asset_code": "USD",
+            "value": "50.000000"
+          }
+        }
+      ]
     }
   ]
 }
@@ -282,7 +353,7 @@ message CreateAndTransferAssetsRequest {
   repeated CreateAssetRequest creates = 1;
 
   // Optional list of assets to transfer
-  repeated TransferAssetRequest transfers = 2;
+  repeated TransferManyAssetRequest transfers = 2;
 }
 
 // Response for combined create/transfer operation
@@ -291,23 +362,33 @@ message CreateAndTransferAssetsRequest {
   "create_results": [
     {
       "transferred": "ByteLengthTransferredAssetVariesByAlgo"
+    },
+    {
+      "transferred": "ByteLengthTransferredAssetVariesByAlgo"
     }
   ],
   "transfer_results": [
     {
-      "transferred": "ByteLengthTransferredVariesByAlgo",
-      "change": "ByteLengthChangeVariesByAlgo",
-      "refund": "ByteLengthRefundVariesByAlgo"
+      "transferred": [
+        "ByteLengthTransferredVariesByAlgo",
+        "ByteLengthTransferredVariesByAlgo"
+      ],
+      "change": "ByteLengthChangeVariesByAlgo"
+    },
+    {
+      "transferred": [
+        "ByteLengthTransferredVariesByAlgo"
+      ]
     }
   ]
 }
 */
 message CreateAndTransferAssetsResponse {
   // Results from the create operations
-  repeated CreateAssetResponse create_results = 1;
+  repeated CreateAssetResponse create_results         = 1;
 
   // Results from the transfer operations
-  repeated TransferAssetResponse transfer_results = 2;
+  repeated TransferManyAssetResponse transfer_results = 2;
 }
 
 // Transacts and holds digital banknotes. This is a server side wallet solution in lieu of a mobile wallet,
