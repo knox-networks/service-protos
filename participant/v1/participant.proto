@@ -208,8 +208,6 @@ message CreateAssetResponse {
 // Request to transfer assets to a new owner
 /* [Example]
 {
-  "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
-  "sender_verifier": "SenderVerifierLengthVariesByAlgo",
   "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
   "amount": {
     "asset_code": "USD",
@@ -218,14 +216,10 @@ message CreateAssetResponse {
 }
 */
 message TransferAssetCommitment {
-  // Authority for the sender and recipient
-  string authority_verifier = 1;
-  // Recipient of the transferred amount
-  string sender_verifier    = 2;
   // Sender of the transferred amount
-  string recipient_verifier = 3;
+  string recipient_verifier = 1;
   // Amount to transfer
-  common.Amount amount      = 4;
+  common.Amount amount      = 2;
 }
 
 // Request to transfer assets to a new owner
@@ -276,10 +270,11 @@ message TransferAssetResponse {
 {
   "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
   "timestamp": "1970-01-01T00:00:00.00Z",
+  "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
+  "sender_verifier": "SenderVerifierLengthVariesByAlgo",
+  "asset_code": "USD",
   "commitments": [
     {
-      "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
-      "sender_verifier": "SenderVerifierLengthVariesByAlgo",
       "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
       "amount": {
         "asset_code": "USD",
@@ -294,8 +289,14 @@ message TransferManyAssetRequest {
   repeated bytes authorized_assets             = 1;
   // Timestamp of the transfer
   string timestamp                             = 2;
+  // Authority for the sender and recipient
+  string authority_verifier                    = 3;
+  // Recipient of the transferred amount
+  string sender_verifier                       = 4;
+  // ISO-4217 currency code to denote remitting Digital Banknotes in a specific currency.
+  string asset_code                            = 5;
   // Commitments to transfer
-  repeated TransferAssetCommitment commitments = 3;
+  repeated TransferAssetCommitment commitments = 6;
 }
 
 /* [Example]
@@ -333,10 +334,11 @@ message TransferManyAssetResponse {
     {
       "authorized_assets": ["AuthorityAssetsLengthVariesByAlgo"],
       "timestamp": "1970-01-01T00:00:00.00Z",
+      "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
+      "sender_verifier": "SenderVerifierLengthVariesByAlgo",
+      "asset_code": "USD",
       "commitments": [
         {
-          "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
-          "sender_verifier": "SenderVerifierLengthVariesByAlgo",
           "recipient_verifier": "RecipientVerifierLengthVariesByAlgo",
           "amount": {
             "asset_code": "USD",
