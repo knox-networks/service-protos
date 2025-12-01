@@ -301,6 +301,9 @@ message TransferManyAssetRequest {
 
 /* [Example]
 {
+  "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
+  "sender_verifier": "SenderVerifierLengthVariesByAlgo",
+  "asset_code": "USD",
   "transferred": [
     "ByteLengthTransferredVariesByAlgo",
     "ByteLengthTransferredVariesByAlgo"
@@ -309,10 +312,16 @@ message TransferManyAssetRequest {
 }
 */
 message TransferManyAssetResponse {
+  // Authority for the sender and recipient
+  string authority_verifier  = 1;
+  // Recipient of the transferred amount
+  string sender_verifier     = 2;
+  // ISO-4217 currency code to denote remitting Digital Banknotes in a specific currency.
+  string asset_code          = 3;
   // Transferred asset
-  repeated bytes transferred     = 1;
+  repeated bytes transferred = 4;
   // Change asset
-  optional bytes change          = 2;
+  optional bytes change      = 5;
 }
 
 // Request to create and/or transfer assets in a single operation
@@ -371,6 +380,9 @@ message CreateAndTransferAssetsRequest {
   ],
   "transfer_results": [
     {
+      "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
+      "sender_verifier": "SenderVerifierLengthVariesByAlgo",
+      "asset_code": "USD",
       "transferred": [
         "ByteLengthTransferredVariesByAlgo",
         "ByteLengthTransferredVariesByAlgo"
@@ -378,6 +390,9 @@ message CreateAndTransferAssetsRequest {
       "change": "ByteLengthChangeVariesByAlgo"
     },
     {
+      "authority_verifier": "AuthorityVerifierLengthVariesByAlgo",
+      "sender_verifier": "SenderVerifierLengthVariesByAlgo",
+      "asset_code": "USD",
       "transferred": [
         "ByteLengthTransferredVariesByAlgo"
       ]
