@@ -202,6 +202,21 @@ message ListFulfilledCommitmentsResponse {
   repeated FulfilledCommitment commitments = 1;
 }
 
+/* [Example]
+{
+  "id": "dead-letter-queue-entry-id"
+}
+*/
+message RequeueRequest {
+  // UUID of dead letter queue entry
+  string id = 1;
+}
+
+/* [Example]
+{}
+*/
+message RequeueResponse {}
+
 // Transaction Manager Service.
 service TransactionManager {
   // Append a list of authorities for given currency codes
@@ -214,7 +229,8 @@ service TransactionManager {
   rpc RemoveAuthority(RemoveAuthorityRequest) returns (RemoveAuthorityResponse);
   // Returns current issuer asset authorities
   rpc GetAssetAuthorities(GetAssetAuthoritiesRequest) returns (GetAssetAuthoritiesResponse);
-
   // List the commitments fulfilled during a given time period.
   rpc ListFulfilledCommitments(ListFulfilledCommitmentsRequest) returns (ListFulfilledCommitmentsResponse);
+  // Requeue entry from the dead letter queue
+  rpc Requeue(RequeueRequest) returns (RequeueResponse);
 }
