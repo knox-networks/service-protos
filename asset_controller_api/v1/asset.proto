@@ -158,13 +158,15 @@ message GetTransactionStatusRequest {
 message GetTransactionStatusResponse {
   enum Status {
     // Status Unspecified.
-    UNSPECIFIED = 0;
+    UNSPECIFIED                  = 0;
     // Status Initiated.
-    INITIATED   = 1;
+    INITIATED                    = 1;
     // Status Successful.
-    SUCCESS     = 2;
+    SUCCESS                      = 2;
     // Status Unsuccessful.
-    FAILURE     = 3;
+    FAILURE                      = 3;
+    // Status Manual Remediation Required.
+    MANUAL_REMEDIATION_REQUIRED  = 4;
   }
   // Status
   Status status = 1;
