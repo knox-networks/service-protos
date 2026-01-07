@@ -97,11 +97,14 @@ message ListBalancesResponse {
 
 /* [Example]
 {
+  "asset_code": "USD",
   "page": 0,
   "page_size": 10000
 }
 */
 message ListParticipantBalanceRequest {
+  // Optional asset code
+  optional string asset_code = 3;
   // Page number for pagination. First page is '0'.
   uint32 page               = 1;
   // Elements per page for pagination.
